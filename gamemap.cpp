@@ -95,25 +95,11 @@ void GameMap::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void GameMap::changeClickedCell()
 {
-//    QPoint clickedCellCoordinates(0, 0);
-//    QPointF mouseClickDouble = mouseEvent->scenePos();
     QPoint mouseClick = mouseEvent->scenePos().toPoint();
 
-//    QImage image(gamePixmap->toImage());
-//    QColor color(image.pixel(mouseClick));
-
-//    clickedCellCoordinates.setX((mouseClick.x() - cellWidth) / (cellWidth + cellSeparator));   //Calculate X coordinate of the clicked cell
-//    clickedCellCoordinates.setY((mouseClick.y() - cellWidth) / (cellWidth + cellSeparator));   //Calculate Y coordinate of the clicked cell
     int x = (mouseClick.x() - cellWidth) / (cellWidth + cellSeparator);
     int y = (mouseClick.y() - cellWidth) / (cellWidth + cellSeparator);
 
-/*
-    if(color.black() == 0){     //When is white
-        drawNthCell(cellCoordinates, blackBrush);
-    } else {                    //when is black
-        drawNthCell(cellCoordinates, whiteBrush);
-    }
-*/
     if(backgroundMap->value(CellCoordinates(x, y)) == dead){     //When is white
         drawNthCell(QPoint(x, y), blackBrush);
         backgroundMap->insert(CellCoordinates(x, y), alive);
@@ -141,28 +127,7 @@ void GameMap::drawNthCell(QPoint currentCell, QSharedPointer<QBrush> brush)
     gamePainter->fillRect(rectToDraw, *brush);
 
 }
-/*
-void GameMap::updateNextGeneration()
-{
-//    QPoint currentCell(0,0);
-//    QImage imageOfGameMap(gamePixmap->toImage());
 
-// foreach can be implemented
-    for (int row = 0; row < cellsPerRow; ++row)
-    {
-//        currentCell.setY(row);
-        for (int col = 0; col < cellsPerRow; ++col)
-        {
-//           currentCell.setX(col);
-//           updateCellState(currentCell, imageOfGameMap);
-           updateCellState(CellCoordinates(col, row));
-        }
-    }
-
-    this->addPixmap(*gamePixmap);                                       //Update the scene
-}
-
-*/
 void GameMap::updateNextGeneration()
 {
 // foreach can be implemented
@@ -183,29 +148,7 @@ void GameMap::updateNextGeneration()
 
 //    this->addPixmap(*gamePixmap);                                       //Update the scene
 }
-/*
-void GameMap::updateCellState(QPoint currentCell, QImage &imageOfGameMap)
-{
-    int lifeCounter = 0;
-    QPoint pixelInCell = getPixelInCurrentCell(currentCell);
-    QVector<QPoint> nighbors = getPixelsFromCellsNighbors(currentCell); //Ceck the coordinates of all nighbors
 
-    for(QPoint pixel: nighbors){                                        //Count the number of alive nighbors.
-        if (QColor(imageOfGameMap.pixel(pixel)).black() > 0){
-            ++lifeCounter;
-        }
-    }
-
-    if (QColor(imageOfGameMap.pixel(pixelInCell)).black() > 0){          //If the cell is black -> alive
-        if (lifeCounter < 2 || lifeCounter > 3){                         //If has too few or too many nighbors
-            drawNthCell(currentCell, whiteBrush);                        //The cell dies
-        }
-    } else {                                                             //If the cell is white -> dead
-        if (lifeCounter == 3){                                           //If has 3 live nighbors
-            drawNthCell(currentCell, blackBrush);                        //The cell becoms alive
-    }
-}
-*/
 void GameMap::updateCellState(CellCoordinates currentCell)
 {
     int lifeCounter = 0;                                                //The algorithm will always count the current cell
@@ -237,95 +180,6 @@ void GameMap::updateCellState(CellCoordinates currentCell)
     }
 
 }
-
-/*
-QVector<QPoint> GameMap::getPixelsFromCellsNighbors(QPoint currentCell)
-{
-    QVector<QPoint> surrowndCellPoints;
-
-    QPoint pixelInCell(0,0);
-    pixelInCell.setX((currentCell.x() + 1) * cellWidth + (currentCell.x() * cellSeparator + (cellWidth / 2)));
-    pixelInCell.setY((currentCell.y() + 1) * cellWidth + (currentCell.y() * cellSeparator + (cellWidth / 2)));
-
-    if (currentCell.x() <= 0 && currentCell.y() <= 0){                                      //If cell is (0, 0)
-        surrowndCellPoints = {
-                              QPoint(pixelInCell.x() + cellWidth, pixelInCell.y()),
-                              QPoint(pixelInCell.x() + cellWidth, pixelInCell.y() + cellWidth),
-                              QPoint(pixelInCell.x(), pixelInCell.y() + cellWidth),
-                             };
-        return surrowndCellPoints;
-    } else if (currentCell.x() <= 0 && currentCell.y() >= cellsPerRow - 1) {                //If cell is (0, last)
-        surrowndCellPoints = {
-                              QPoint(pixelInCell.x(), pixelInCell.y() - cellWidth),
-                              QPoint(pixelInCell.x() + cellWidth, pixelInCell.y() - cellWidth),
-                              QPoint(pixelInCell.x() + cellWidth, pixelInCell.y()),
-                             };
-        return surrowndCellPoints;
-    } else if (currentCell.x() >= cellsPerRow - 1 && currentCell.y() <= 0) {                //If cell is (last, 0)
-        surrowndCellPoints = {
-                              QPoint(pixelInCell.x(), pixelInCell.y() + cellWidth),
-                              QPoint(pixelInCell.x() - cellWidth, pixelInCell.y() + cellWidth),
-                              QPoint(pixelInCell.x() - cellWidth, pixelInCell.y())
-                             };
-        return surrowndCellPoints;
-    } else if (currentCell.x() >= cellsPerRow - 1 && currentCell.y() >= cellsPerRow - 1) {  //If cell is (last, last)
-        surrowndCellPoints = {
-                              QPoint(pixelInCell.x() - cellWidth, pixelInCell.y() - cellWidth),
-                              QPoint(pixelInCell.x(), pixelInCell.y() - cellWidth),
-                              QPoint(pixelInCell.x() - cellWidth, pixelInCell.y())
-                             };
-        return surrowndCellPoints;
-    } else if (currentCell.x() <= 0) {                                                      //If cell is (0, any)
-        surrowndCellPoints = {
-                              QPoint(pixelInCell.x(), pixelInCell.y() - cellWidth),
-                              QPoint(pixelInCell.x() + cellWidth, pixelInCell.y() - cellWidth),
-                              QPoint(pixelInCell.x() + cellWidth, pixelInCell.y()),
-                              QPoint(pixelInCell.x() + cellWidth, pixelInCell.y() + cellWidth),
-                              QPoint(pixelInCell.x(), pixelInCell.y() + cellWidth),
-                             };
-        return surrowndCellPoints;
-    } else if (currentCell.x() >= cellsPerRow - 1) {                                        //If cell is (last, any)
-        surrowndCellPoints = {
-                              QPoint(pixelInCell.x() - cellWidth, pixelInCell.y() - cellWidth),
-                              QPoint(pixelInCell.x(), pixelInCell.y() - cellWidth),
-                              QPoint(pixelInCell.x(), pixelInCell.y() + cellWidth),
-                              QPoint(pixelInCell.x() - cellWidth, pixelInCell.y() + cellWidth),
-                              QPoint(pixelInCell.x() - cellWidth, pixelInCell.y())
-                             };
-        return surrowndCellPoints;
-    } else if (currentCell.y() <= 0) {                                                      //If cell is (any, 0)
-        surrowndCellPoints = {
-                              QPoint(pixelInCell.x() + cellWidth, pixelInCell.y()),
-                              QPoint(pixelInCell.x() + cellWidth, pixelInCell.y() + cellWidth),
-                              QPoint(pixelInCell.x(), pixelInCell.y() + cellWidth),
-                              QPoint(pixelInCell.x() - cellWidth, pixelInCell.y() + cellWidth),
-                              QPoint(pixelInCell.x() - cellWidth, pixelInCell.y())
-                             };
-        return surrowndCellPoints;
-    } else if (currentCell.y() >= cellsPerRow - 1) {                                        //If cell is (any, last)
-        surrowndCellPoints = {
-                              QPoint(pixelInCell.x() - cellWidth, pixelInCell.y() - cellWidth),
-                              QPoint(pixelInCell.x(), pixelInCell.y() - cellWidth),
-                              QPoint(pixelInCell.x() + cellWidth, pixelInCell.y() - cellWidth),
-                              QPoint(pixelInCell.x() + cellWidth, pixelInCell.y()),
-                              QPoint(pixelInCell.x() - cellWidth, pixelInCell.y())
-                             };
-        return surrowndCellPoints;
-    } else {                                                                                //All not boundary cells
-        surrowndCellPoints = {
-                              QPoint(pixelInCell.x() - cellWidth, pixelInCell.y() - cellWidth),
-                              QPoint(pixelInCell.x(), pixelInCell.y() - cellWidth),
-                              QPoint(pixelInCell.x() + cellWidth, pixelInCell.y() - cellWidth),
-                              QPoint(pixelInCell.x() + cellWidth, pixelInCell.y()),
-                              QPoint(pixelInCell.x() + cellWidth, pixelInCell.y() + cellWidth),
-                              QPoint(pixelInCell.x(), pixelInCell.y() + cellWidth),
-                              QPoint(pixelInCell.x() - cellWidth, pixelInCell.y() + cellWidth),
-                              QPoint(pixelInCell.x() - cellWidth, pixelInCell.y())
-                             };
-        return surrowndCellPoints;
-    }
-}
-*/
 
 QPoint GameMap::getPixelInCurrentCell(QPoint currentCell)
 {

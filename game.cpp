@@ -38,7 +38,8 @@ void Game::runningGame()
         int i;
         map->updateNextGeneration();
         this->show();
-        std::this_thread::sleep_for(std::chrono::milliseconds(300));
+        QThread::msleep(100);
+//        std::this_thread::sleep_for(std::chrono::milliseconds(300));
 
         qDebug() << i++;
         QCoreApplication::processEvents();                      //Continue with processing after all thread complete
@@ -48,22 +49,12 @@ void Game::runningGame()
 void Game::startGame()
 {
     qDebug() << gameIsStarted;
-    /*
-    while(true){
-        qDebug() << i++;
-        map->updateNextGeneration();
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-        break;
-    }
 
-    */
     if (gameIsStarted) {
-        RunningGameThread* gameThread = new RunningGameThread();
+        QScopedPointer<RunningGameThread> gameThread(new RunningGameThread);
+//        RunningGameThread* gameThread = new RunningGameThread();
         gameThread->startGame(this);
 
-        connect(gameThread, &RunningGameThread::finished, gameThread, &QObject::deleteLater);
-
+        connect(gameThread.data(), &RunningGameThread::finished, gameThread.data(), &QObject::deleteLater);
     }
-
-
 }
