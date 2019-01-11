@@ -24,7 +24,6 @@ public:
     ~GameMap();
 
     void setInitialMap();
-    void drawGeneration();
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void drawNthCell(QPoint currentCell, QSharedPointer<QBrush> brush);
     void updateNextGeneration();
@@ -41,6 +40,7 @@ public slots:
 
 private:
     enum vitalityState{dead, alive};
+    enum generationType{initial, next};
 
     int cellsPerRow;
     int cellWidth;
@@ -59,6 +59,7 @@ private:
     QSharedPointer<QBrush> blackBrush;
     QGraphicsSceneMouseEvent* mouseEvent;
 
+    void drawGeneration(generationType generation);
 };
 
 

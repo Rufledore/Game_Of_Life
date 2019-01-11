@@ -38,7 +38,7 @@ void Game::runningGame()
         int i;
         map->updateNextGeneration();
         this->show();
-        QThread::msleep(100);
+        QThread::msleep(10);
 //        std::this_thread::sleep_for(std::chrono::milliseconds(300));
 
         qDebug() << i++;

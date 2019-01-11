@@ -42,52 +42,48 @@ GameMap::GameMap(QWidget *parent) :
 
 GameMap::~GameMap()
 {
-//    delete gamePixmap;
-//    delete gameGraphicView;
-//    delete gamePainter;
-//    delete whiteBrush;
-//    delete blackBrush;
     delete mouseEvent;
 }
 
 void GameMap::setInitialMap()
 {
-    for (int r_height = cellWidth, x = 0;
-         r_height < gamePixmap->height() - cellWidth;
-         r_height += cellWidth + cellSeparator, x++
-         ){
-        for (int r_width = cellWidth, y = 0;
-             r_width < gamePixmap->width() - cellWidth;
-             r_width += cellWidth + cellSeparator, y++
-             ){
-            QRectF rect(r_width, r_height, cellWidth, cellWidth);
-            if (x%2 == 0) {
-                gamePainter->fillRect(rect, *whiteBrush);               //Update the graphics map
+    for (int x = 0; x < cellsPerRow; x++) {
+        for (int y = 0; y < cellsPerRow; y++) {
+            if (y%2 == 0) {
                 backgroundMap->insert(CellCoordinates(x, y), dead);     //Update the background map
             } else {
-                gamePainter->fillRect(rect, *blackBrush);               //Update the graphics map
                 backgroundMap->insert(CellCoordinates(x, y), alive);     //Update the background map
             }
         }
     }
-    qDebug() << backgroundMap->value(CellCoordinates(1,1));
-//    this->addPixmap(*gamePixmap);
-    graphicItem->setPixmap(*gamePixmap);
+
+    this->drawGeneration(initial);
 }
 
-void GameMap::drawGeneration()
+void GameMap::drawGeneration(generationType generation)
 {
     for (int row = 0; row < cellsPerRow; ++row) {
         for (int col = 0; col < cellsPerRow; ++col) {
-            if (backgroundMap->value(CellCoordinates(col,row)) == alive){
-                drawNthCell(QPoint(col, row), blackBrush);
-            }
-            else {
-                drawNthCell(QPoint(col, row), whiteBrush);
+            if (generation == initial) {
+                if (backgroundMap->value(CellCoordinates(col, row)) == alive) {
+                    drawNthCell(QPoint(col, row), blackBrush);
+                }
+                else {
+                    drawNthCell(QPoint(col, row), whiteBrush);
+                }
+            } else if (generation == next) {
+                if (newGenerationBackgroundMap->value(CellCoordinates(col, row)) !=                 //If this cell is the same in the next generation it
+                    backgroundMap->value(CellCoordinates(col, row))) {                              //won't be updated.
+                    if (newGenerationBackgroundMap->value(CellCoordinates(col, row)) == alive) {
+                        drawNthCell(QPoint(col, row), blackBrush);
+                    }
+                    else {
+                        drawNthCell(QPoint(col, row), whiteBrush);
+                    }
+                }
             }
         }
     }
-//    this->addPixmap(*gamePixmap);                                       //Update the scene
     graphicItem->setPixmap(*gamePixmap);
 }
 
@@ -106,10 +102,10 @@ void GameMap::changeClickedCell()
     int x = (mouseClick.x() - cellWidth) / (cellWidth + cellSeparator);
     int y = (mouseClick.y() - cellWidth) / (cellWidth + cellSeparator);
 
-    if(backgroundMap->value(CellCoordinates(x, y)) == dead){     //When is white
+    if(backgroundMap->value(CellCoordinates(x, y)) == dead) {     //When is white
         drawNthCell(QPoint(x, y), blackBrush);
         backgroundMap->insert(CellCoordinates(x, y), alive);
-    } else {                    //when is black
+    } else {                                                      //when is black
         drawNthCell(QPoint(x, y), whiteBrush);
         backgroundMap->insert(CellCoordinates(x, y), dead);
     }
@@ -146,12 +142,12 @@ void GameMap::updateNextGeneration()
         }
     }
 
+    this->drawGeneration(next);
 
     backgroundMap.swap(newGenerationBackgroundMap);
     newGenerationBackgroundMap =
             QSharedPointer<QHash<CellCoordinates, vitalityState>>(new QHash<CellCoordinates, vitalityState>());
 
-    this->drawGeneration();
 
 //    this->addPixmap(*gamePixmap);                                       //Update the scene
 }
@@ -166,7 +162,7 @@ void GameMap::updateCellState(CellCoordinates currentCell)
         {
             if (backgroundMap->value(
                         CellCoordinates((currentCell.first + colCorrection), (currentCell.second + rowCorrection))) == alive &&
-                        !(colCorrection == 0 && rowCorrection == 0)){   //Eliminates the chanse to count the current cell too
+                        !(colCorrection == 0 && rowCorrection == 0)) {   //Eliminates the chanse to count the current cell too
                 ++lifeCounter;
             }
         }
