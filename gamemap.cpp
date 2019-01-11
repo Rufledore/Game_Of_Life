@@ -11,8 +11,8 @@
 
 GameMap::GameMap(QWidget *parent) :
     QGraphicsScene(parent),
-    cellsPerRow(60),
-    cellWidth(15),
+    cellsPerRow(201),
+    cellWidth(5),
     cellSeparator(cellWidth < 10 ? 1 : cellWidth/10),
     fieldWidth((cellsPerRow + 2) * cellWidth + (cellsPerRow - 1) * cellSeparator),  //WIdth = (Num of cells * width of cell) + (Num of cells - 1) * separator) + 2 cells for the frame;
     fieldHeight((cellsPerRow + 2) * cellWidth + (cellsPerRow - 1) * cellSeparator), //(cellsPerRow * (cellWidth + cellSeparator)) + cellWidth * 2 - cellSeparator;
@@ -21,19 +21,20 @@ GameMap::GameMap(QWidget *parent) :
     gameGraphicView(new QGraphicsView(this, parent)),                               //Used for visualising of the scene
     gamePixmap(new QPixmap(fieldWidth, fieldHeight)),                               //Used as a surface for painting
     gamePainter(new QPainter(gamePixmap.data())),
+    graphicItem(this->addPixmap(*gamePixmap)),
     whiteBrush(new QBrush(QColor(255,255,255))),
     blackBrush(new QBrush(QColor(0,0,0))),
     mouseEvent(nullptr)
 {
     gameGraphicView->show();
 //    gameGraphicView->resize(fieldWidth + cellWidth, fieldHeight + cellWidth);
-    gameGraphicView->resize(600, 600);
+    gameGraphicView->resize(1200, 1000);
 
-    this->addPixmap(*gamePixmap);
+//    this->addPixmap(*gamePixmap);
 
     this->setInitialMap();
 
-//    graphicItem->setPixmap(*gamePixmap);
+    graphicItem->setPixmap(*gamePixmap);
 
     connect(this, &GameMap::clicked, this, &GameMap::changeClickedCell);
 
@@ -60,14 +61,18 @@ void GameMap::setInitialMap()
              r_width += cellWidth + cellSeparator, y++
              ){
             QRectF rect(r_width, r_height, cellWidth, cellWidth);
-            gamePainter->fillRect(rect, *whiteBrush);               //Update the graphics map
-
-            //(*backgroundMap)[QPoint(x, y)] = dead;                  //Update the background map
-            backgroundMap->insert(CellCoordinates(x, y), dead);     //Update the background map
+            if (x%2 == 0) {
+                gamePainter->fillRect(rect, *whiteBrush);               //Update the graphics map
+                backgroundMap->insert(CellCoordinates(x, y), dead);     //Update the background map
+            } else {
+                gamePainter->fillRect(rect, *blackBrush);               //Update the graphics map
+                backgroundMap->insert(CellCoordinates(x, y), alive);     //Update the background map
+            }
         }
     }
     qDebug() << backgroundMap->value(CellCoordinates(1,1));
-    this->addPixmap(*gamePixmap);
+//    this->addPixmap(*gamePixmap);
+    graphicItem->setPixmap(*gamePixmap);
 }
 
 void GameMap::drawGeneration()
@@ -82,7 +87,8 @@ void GameMap::drawGeneration()
             }
         }
     }
-    this->addPixmap(*gamePixmap);                                       //Update the scene
+//    this->addPixmap(*gamePixmap);                                       //Update the scene
+    graphicItem->setPixmap(*gamePixmap);
 }
 
 void GameMap::mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -108,7 +114,8 @@ void GameMap::changeClickedCell()
         backgroundMap->insert(CellCoordinates(x, y), dead);
     }
 
-    this->addPixmap(*gamePixmap);
+//    this->addPixmap(*gamePixmap);
+    graphicItem->setPixmap(*gamePixmap);
 }
 
 void GameMap::drawNthCell(QPoint currentCell, QSharedPointer<QBrush> brush)
