@@ -147,9 +147,6 @@ void GameMap::updateNextGeneration()
     backgroundMap.swap(newGenerationBackgroundMap);
     newGenerationBackgroundMap =
             QSharedPointer<QHash<CellCoordinates, vitalityState>>(new QHash<CellCoordinates, vitalityState>());
-
-
-//    this->addPixmap(*gamePixmap);                                       //Update the scene
 }
 
 void GameMap::updateCellState(CellCoordinates currentCell)
@@ -181,7 +178,6 @@ void GameMap::updateCellState(CellCoordinates currentCell)
             newGenerationBackgroundMap->insert(currentCell, alive);      //The cell becomes alive
         }
     }
-
 }
 
 QPoint GameMap::getPixelInCurrentCell(QPoint currentCell)
