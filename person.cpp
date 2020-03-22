@@ -37,6 +37,5 @@ void Person::infect(int sicknessPeriod, double deathRate)
     if (randomDeath < deathRate) {
         willDie = true;
         dayOfDeath = static_cast<int>(QRandomGenerator::global()->generateDouble() * sicknessPeriod);
-
     }
 }

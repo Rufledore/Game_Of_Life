@@ -132,7 +132,7 @@ void GameMap::drawNthCell(QPoint currentCell, QSharedPointer<QBrush> brush)
 
 }
 
-void GameMap::updateNextGeneration()
+void GameMap::updateNextGeneration(InfectionMap backgroundMap)
 {
 // foreach can be implemented
 //    QHash<CellCoordinates, vitalityState> temporaryMap = *backgroundMap;

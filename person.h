@@ -7,7 +7,7 @@ class Person
 public:
     Person();
     void updateDayCounters(int incubationPeriod, int illnessPeriod);
-    void infect();
+    void infect(int sicknessPeriod, double deathRate);
 
     bool isInfected = false;
     bool isAlive = true;

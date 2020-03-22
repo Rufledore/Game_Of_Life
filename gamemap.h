@@ -11,13 +11,6 @@
 #include <QScopedPointer>
 #include <QSharedPointer>
 
-struct Person
-{
-    bool isInfected;
-    bool isAlive;
-    int incubationDaysCounter;
-    int illnessDaysCounter;
-};
 
 class GameMap : public QGraphicsScene
 {
@@ -56,8 +49,8 @@ private:
     int fieldWidth;
     int fieldHeight;
 
-    QSharedPointer<QHash<CellCoordinates, Person>> backgroundMap;               //A table with vitaliti states of each cell of the map. The key is QPait of coordinates.
-    QSharedPointer<QHash<CellCoordinates, Person>> newGenerationBackgroundMap;  //A table with vitaliti states of each cell of the map. The key is QPait of coordinates.
+//    QSharedPointer<QHash<CellCoordinates, Person>> backgroundMap;               //A table with vitaliti states of each cell of the map. The key is QPait of coordinates.
+//    QSharedPointer<QHash<CellCoordinates, Person>> newGenerationBackgroundMap;  //A table with vitaliti states of each cell of the map. The key is QPait of coordinates.
 //    QSharedPointer<QHash<CellCoordinates, vitalityState>> backgroundMap;               //A table with vitaliti states of each cell of the map. The key is QPait of coordinates.
 //    QSharedPointer<QHash<CellCoordinates, vitalityState>> newGenerationBackgroundMap;  //A table with vitaliti states of each cell of the map. The key is QPait of coordinates.
     QScopedPointer<QGraphicsScene> gameGraphicScene;                                   //A graphics scebe which present the game map
