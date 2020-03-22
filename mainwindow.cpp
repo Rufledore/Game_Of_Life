@@ -1,3 +1,6 @@
+#include <QGridLayout>
+#include <QDebug>
+
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "entity.h"
@@ -10,20 +13,35 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 //    this->setStyleSheet("background-color: black");
 
-    GameMap* map = new GameMap(this);
-    QLayout* layout = new QHBoxLayout(this);
+//    GameMap* map = new GameMap(this);
 
-//    layout->addWidget(map);
-//    setLayout(layout);
-//    map->move(600, 600);
-    map->show();
-//    Entity *first = new Entity(this);
-//    first->show();
-//    first->move(100, 100);
+    ui->field->setLayout(new QGridLayout);
+    ui->field->layout()->addWidget(&m_Game);
+
+
+    connect(ui->lineEdit_incubationPeriod, &QLineEdit::textChanged, this, &MainWindow::updateInitialParameters);
+    connect(ui->lineEdit_illnessPeriod, &QLineEdit::textChanged, this, &MainWindow::updateInitialParameters);
+    connect(ui->lineEdit_infectionRate, &QLineEdit::textChanged, this, &MainWindow::updateInitialParameters);
+    connect(ui->lineEdit_deathRate, &QLineEdit::textChanged, this, &MainWindow::updateInitialParameters);
 
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::updateOutpus()
+{
+    ui->label_indicator_numberOfInfections->setText(QString::number(m_numberOfInfected));
+}
+
+void MainWindow::updateInitialParameters()
+{
+    m_incubationPeriod = ui->lineEdit_incubationPeriod->text().toInt();
+    m_illnessPeriod = ui->lineEdit_illnessPeriod->text().toInt();
+    m_infectionRate = ui->lineEdit_infectionRate->text().toInt();
+    m_deathRate = ui->lineEdit_deathRate->text().toDouble();
+
+    qDebug() << m_incubationPeriod << ',' << m_illnessPeriod << ',' << m_infectionRate << ',' << m_deathRate;
 }

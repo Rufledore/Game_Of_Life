@@ -11,12 +11,20 @@
 #include <QScopedPointer>
 #include <QSharedPointer>
 
+struct Person
+{
+    bool isInfected;
+    bool isAlive;
+    int incubationDaysCounter;
+    int illnessDaysCounter;
+};
 
 class GameMap : public QGraphicsScene
 {
     Q_OBJECT
 
 typedef QPair<int, int> CellCoordinates;
+typedef QHash<CellCoordinates, Person> InfectionMap;
 
 public:
 
@@ -48,8 +56,10 @@ private:
     int fieldWidth;
     int fieldHeight;
 
-    QSharedPointer<QHash<CellCoordinates, vitalityState>> backgroundMap;               //A table with vitaliti states of each cell of the map. The key is QPait of coordinates.
-    QSharedPointer<QHash<CellCoordinates, vitalityState>> newGenerationBackgroundMap;  //A table with vitaliti states of each cell of the map. The key is QPait of coordinates.
+    QSharedPointer<QHash<CellCoordinates, Person>> backgroundMap;               //A table with vitaliti states of each cell of the map. The key is QPait of coordinates.
+    QSharedPointer<QHash<CellCoordinates, Person>> newGenerationBackgroundMap;  //A table with vitaliti states of each cell of the map. The key is QPait of coordinates.
+//    QSharedPointer<QHash<CellCoordinates, vitalityState>> backgroundMap;               //A table with vitaliti states of each cell of the map. The key is QPait of coordinates.
+//    QSharedPointer<QHash<CellCoordinates, vitalityState>> newGenerationBackgroundMap;  //A table with vitaliti states of each cell of the map. The key is QPait of coordinates.
     QScopedPointer<QGraphicsScene> gameGraphicScene;                                   //A graphics scebe which present the game map
     QScopedPointer<QGraphicsView> gameGraphicView;                                     //A graphics view for presenting the game map
     QSharedPointer<QPixmap> gamePixmap;                                                //A surface where the game is painted

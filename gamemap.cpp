@@ -11,8 +11,8 @@
 
 GameMap::GameMap(QWidget *parent) :
     QGraphicsScene(parent),
-    cellsPerRow(201),
-    cellWidth(5),
+    cellsPerRow(129),
+    cellWidth(6),
     cellSeparator(cellWidth < 10 ? 1 : cellWidth/10),
     fieldWidth((cellsPerRow + 2) * cellWidth + (cellsPerRow - 1) * cellSeparator),  //WIdth = (Num of cells * width of cell) + (Num of cells - 1) * separator) + 2 cells for the frame;
     fieldHeight((cellsPerRow + 2) * cellWidth + (cellsPerRow - 1) * cellSeparator), //(cellsPerRow * (cellWidth + cellSeparator)) + cellWidth * 2 - cellSeparator;
@@ -28,11 +28,12 @@ GameMap::GameMap(QWidget *parent) :
 {
     gameGraphicView->show();
 //    gameGraphicView->resize(fieldWidth + cellWidth, fieldHeight + cellWidth);
-    gameGraphicView->resize(1200, 1000);
+    gameGraphicView->resize(950, 950);
 
 //    this->addPixmap(*gamePixmap);
 
-    this->setInitialMap();
+//    this->setInitialMap();
+    this->drawGeneration(initial);
 
     graphicItem->setPixmap(*gamePixmap);
 

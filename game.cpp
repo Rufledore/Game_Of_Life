@@ -14,7 +14,7 @@ Game::Game(QWidget *parent) :
 {
 //    GameMap *map = new GameMap(this);
     this->show();
-    connect(this, &Game::keyClicked, this, &Game::startGame);
+//    connect(this, &Game::keyClicked, this, &Game::startGame);
 }
 
 Game::~Game()
@@ -46,7 +46,7 @@ void Game::runningGame()
     }
 }
 
-void Game::startGame()
+void Game::startGame(int incubationPeriod, int illnessPeriod, int infectionRate, double deathRate)
 {
     qDebug() << gameIsStarted;
 

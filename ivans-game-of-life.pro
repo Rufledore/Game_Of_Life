@@ -28,14 +28,19 @@ SOURCES += \
         main.cpp \
     game.cpp \
     gamemap.cpp \
+    mainwindow.cpp \
+    person.cpp \
     runninggamethread.cpp
 
 HEADERS += \
     game.h \
     gamemap.h \
+    mainwindow.h \
+    person.h \
     runninggamethread.h
 
-FORMS +=
+FORMS += \
+    mainwindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

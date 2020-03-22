@@ -1,4 +1,5 @@
 #include <QApplication>
+#include "mainwindow.h"
 #include "gamemap.h"
 #include "game.h"
 
@@ -6,8 +7,10 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    Game game;
-    game.show();
+    MainWindow w;
+    w.show();
+//    Game game;
+//    game.show();
 
     return a.exec();
 }

@@ -15,10 +15,10 @@ public:
 
     void keyPressEvent(QKeyEvent *event);
     void runningGame();
+    void startGame(int incubationPeriod, int illnessPeriod, int infectionRate, double deathRate);
 signals:
     void keyClicked();
 public slots:
-    void startGame();
 private:
     bool gameIsStarted;
     GameMap *map;
