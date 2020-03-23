@@ -18,7 +18,7 @@ void Person::updateDayCounters(int incubationPeriod, int sicknessPeriod)
             }
         } else {        // Is sick
             ++sicknessDaysCounter;
-            if (willDie && dayOfDeath == sicknessDaysCounter) {
+            if (dayOfDeath == sicknessDaysCounter) {
                 isAlive = false;
             }
             if (sicknessDaysCounter > sicknessPeriod) {
@@ -35,7 +35,6 @@ void Person::infect(int sicknessPeriod, double deathRate)
 
     isInfected = true;
     if (randomDeath < deathRate) {
-        willDie = true;
         dayOfDeath = static_cast<int>(QRandomGenerator::global()->generateDouble() * sicknessPeriod);
     }
 }

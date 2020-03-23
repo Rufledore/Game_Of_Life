@@ -11,8 +11,10 @@
 #include <QScopedPointer>
 #include <QSharedPointer>
 
+#include "person.h"
 
-class GameMap : public QGraphicsScene
+
+class PopulationMap : public QGraphicsScene
 {
     Q_OBJECT
 
@@ -21,14 +23,16 @@ typedef QHash<CellCoordinates, Person> InfectionMap;
 
 public:
 
-    explicit GameMap(QWidget *parent = nullptr);
-    ~GameMap();
+    explicit PopulationMap(QWidget *parent = nullptr);
+    ~PopulationMap();
 
     void setInitialMap();
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void drawNthCell(QPoint currentCell, QSharedPointer<QBrush> brush);
     void updateNextGeneration();
     void updateCellState(CellCoordinates currentCell);
+    void drawInitialGeneration();
+    void drawNextGeneration(InfectionMap *mapForDisplay);
 //    QVector<QPoint> getPixelsFromCellsNighbors(QPoint currentCell);
     QVector<QPoint> getCellsNighbors(CellCoordinates currentCell);
     QPoint getPixelInCurrentCell(QPoint currentCell);
@@ -40,7 +44,7 @@ public slots:
     void changeClickedCell();
 
 private:
-    enum vitalityState{dead, alive};
+    enum vitalityState{healty, sick, dead};
     enum generationType{initial, next};
 
     int cellsPerRow;
@@ -51,7 +55,7 @@ private:
 
 //    QSharedPointer<QHash<CellCoordinates, Person>> backgroundMap;               //A table with vitaliti states of each cell of the map. The key is QPait of coordinates.
 //    QSharedPointer<QHash<CellCoordinates, Person>> newGenerationBackgroundMap;  //A table with vitaliti states of each cell of the map. The key is QPait of coordinates.
-//    QSharedPointer<QHash<CellCoordinates, vitalityState>> backgroundMap;               //A table with vitaliti states of each cell of the map. The key is QPait of coordinates.
+    QSharedPointer<QHash<CellCoordinates, vitalityState>> backgroundMap;               //A table with vitaliti states of each cell of the map. The key is QPait of coordinates.
 //    QSharedPointer<QHash<CellCoordinates, vitalityState>> newGenerationBackgroundMap;  //A table with vitaliti states of each cell of the map. The key is QPait of coordinates.
     QScopedPointer<QGraphicsScene> gameGraphicScene;                                   //A graphics scebe which present the game map
     QScopedPointer<QGraphicsView> gameGraphicView;                                     //A graphics view for presenting the game map

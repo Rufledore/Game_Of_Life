@@ -21,7 +21,7 @@ signals:
 public slots:
 private:
     bool gameIsStarted;
-    GameMap *map;
+    PopulationMap *map;
     QKeyEvent *keyEvent;
     std::thread game;
 };

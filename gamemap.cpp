@@ -9,7 +9,7 @@
 #include <QPoint>
 #include <QPair>
 
-GameMap::GameMap(QWidget *parent) :
+PopulationMap::PopulationMap(QWidget *parent) :
     QGraphicsScene(parent),
     cellsPerRow(129),
     cellWidth(6),
@@ -17,7 +17,7 @@ GameMap::GameMap(QWidget *parent) :
     fieldWidth((cellsPerRow + 2) * cellWidth + (cellsPerRow - 1) * cellSeparator),  //WIdth = (Num of cells * width of cell) + (Num of cells - 1) * separator) + 2 cells for the frame;
     fieldHeight((cellsPerRow + 2) * cellWidth + (cellsPerRow - 1) * cellSeparator), //(cellsPerRow * (cellWidth + cellSeparator)) + cellWidth * 2 - cellSeparator;
     backgroundMap(new QHash<CellCoordinates, vitalityState>()),                     //Map with vitaliti state of each sqare of the game map
-    newGenerationBackgroundMap(new QHash<CellCoordinates, vitalityState>()),            //Map for modifying when the next generation is calculated
+//    newGenerationBackgroundMap(new QHash<CellCoordinates, vitalityState>()),            //Map for modifying when the next generation is calculated
     gameGraphicView(new QGraphicsView(this, parent)),                               //Used for visualising of the scene
     gamePixmap(new QPixmap(fieldWidth, fieldHeight)),                               //Used as a surface for painting
     gamePainter(new QPainter(gamePixmap.data())),
@@ -37,36 +37,60 @@ GameMap::GameMap(QWidget *parent) :
 
     graphicItem->setPixmap(*gamePixmap);
 
-    connect(this, &GameMap::clicked, this, &GameMap::changeClickedCell);
+    connect(this, &PopulationMap::clicked, this, &PopulationMap::changeClickedCell);
 
 }
 
-GameMap::~GameMap()
+PopulationMap::~PopulationMap()
 {
     delete mouseEvent;
 }
 
-void GameMap::setInitialMap()
+void PopulationMap::setInitialMap()
 {
+    /* Use this function if you want to automatically set initial conditions on the population.
+
     for (int x = 0; x < cellsPerRow; x++) {
         for (int y = 0; y < cellsPerRow; y++) {
             if (y%2 == 0) {
                 backgroundMap->insert(CellCoordinates(x, y), dead);     //Update the background map
             } else {
-                backgroundMap->insert(CellCoordinates(x, y), alive);     //Update the background map
+                backgroundMap->insert(CellCoordinates(x, y), healty);   //Update the background map
             }
         }
     }
 
+    */
     this->drawGeneration(initial);
 }
 
-void GameMap::drawGeneration(generationType generation)
+
+void PopulationMap::drawInitialGeneration()
+{
+    for (int row = 0; row < cellsPerRow; ++row) {
+        for (int col = 0; col < cellsPerRow; ++col) {
+            if (backgroundMap->value(CellCoordinates(col, row)) == sick) {
+                drawNthCell(QPoint(col, row), blackBrush);
+            }
+            else {
+                    drawNthCell(QPoint(col, row), whiteBrush);
+            }
+        }
+    }
+}
+
+void PopulationMap::drawNextGeneration(PopulationMap::InfectionMap *mapForDisplay)
+{
+
+}
+
+
+void PopulationMap::drawGeneration(generationType generation)
 {
     for (int row = 0; row < cellsPerRow; ++row) {
         for (int col = 0; col < cellsPerRow; ++col) {
             if (generation == initial) {
-                if (backgroundMap->value(CellCoordinates(col, row)) == alive) {
+                if (backgroundMap->value(CellCoordinates(col, row)) == sick) {
                     drawNthCell(QPoint(col, row), blackBrush);
                 }
                 else {
@@ -88,7 +112,7 @@ void GameMap::drawGeneration(generationType generation)
     graphicItem->setPixmap(*gamePixmap);
 }
 
-void GameMap::mousePressEvent(QGraphicsSceneMouseEvent *event)
+void PopulationMap::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     mouseEvent = event;
     qDebug() << mouseEvent->scenePos();
@@ -96,17 +120,17 @@ void GameMap::mousePressEvent(QGraphicsSceneMouseEvent *event)
     clicked();
 }
 
-void GameMap::changeClickedCell()
+void PopulationMap::changeClickedCell()
 {
     QPoint mouseClick = mouseEvent->scenePos().toPoint();
 
     int x = (mouseClick.x() - cellWidth) / (cellWidth + cellSeparator);
     int y = (mouseClick.y() - cellWidth) / (cellWidth + cellSeparator);
 
-    if(backgroundMap->value(CellCoordinates(x, y)) == dead) {     //When is white
+    if (backgroundMap->value(CellCoordinates(x, y)) == dead) {     //When is white
         drawNthCell(QPoint(x, y), blackBrush);
         backgroundMap->insert(CellCoordinates(x, y), alive);
-    } else {                                                      //when is black
+    } else {                                                       //when is black
         drawNthCell(QPoint(x, y), whiteBrush);
         backgroundMap->insert(CellCoordinates(x, y), dead);
     }
@@ -115,7 +139,7 @@ void GameMap::changeClickedCell()
     graphicItem->setPixmap(*gamePixmap);
 }
 
-void GameMap::drawNthCell(QPoint currentCell, QSharedPointer<QBrush> brush)
+void PopulationMap::drawNthCell(QPoint currentCell, QSharedPointer<QBrush> brush)
 {
     QPoint topLeft(0, 0);
     QPoint bottomRight(0, 0);
@@ -132,7 +156,7 @@ void GameMap::drawNthCell(QPoint currentCell, QSharedPointer<QBrush> brush)
 
 }
 
-void GameMap::updateNextGeneration(InfectionMap backgroundMap)
+void PopulationMap::updateNextGeneration(InfectionMap backgroundMap)
 {
 // foreach can be implemented
 //    QHash<CellCoordinates, vitalityState> temporaryMap = *backgroundMap;
@@ -150,7 +174,7 @@ void GameMap::updateNextGeneration(InfectionMap backgroundMap)
             QSharedPointer<QHash<CellCoordinates, vitalityState>>(new QHash<CellCoordinates, vitalityState>());
 }
 
-void GameMap::updateCellState(CellCoordinates currentCell)
+void PopulationMap::updateCellState(CellCoordinates currentCell)
 {
     int lifeCounter = 0;                                                //The algorithm will always count the current cell
 
@@ -181,7 +205,7 @@ void GameMap::updateCellState(CellCoordinates currentCell)
     }
 }
 
-QPoint GameMap::getPixelInCurrentCell(QPoint currentCell)
+QPoint PopulationMap::getPixelInCurrentCell(QPoint currentCell)
 {
     QPoint pixelInCell(0,0);
     pixelInCell.setX((currentCell.x() + 1) * cellWidth + (currentCell.x() * cellSeparator + (cellWidth / 2)));

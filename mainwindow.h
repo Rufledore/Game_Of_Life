@@ -25,11 +25,18 @@ public:
     ~MainWindow();
 
 private:
+    // Simulation parameters
+
     // Input parameters
-    int m_incubationPeriod;
-    int m_illnessPeriod;
-    int m_infectionRate;
+    double m_incubationPeriod;
+    double m_illnessPeriod;
+    double m_infectionRate;
     double m_deathRate;
+
+    // Calculated initial parameters
+    double m_probabilityToInfect;
+
+
 
     // Output parameters
     int m_numberOfInfected;
@@ -42,7 +49,7 @@ private:
     Ui::MainWindow *ui;
     Game m_Game;\
 
-    // Methods -------------------------------------------------------------------
+    // Methods ---------------------------------------------------------------------------------------------------------
     void calculateNextDay();
     void updateOutpus();
 

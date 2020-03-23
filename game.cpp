@@ -9,7 +9,7 @@
 Game::Game(QWidget *parent) :
     QWidget(parent),
     gameIsStarted(false),
-    map(new GameMap(this)),
+    map(new PopulationMap(this)),
     keyEvent(nullptr)
 {
 //    GameMap *map = new GameMap(this);

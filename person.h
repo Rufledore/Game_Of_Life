@@ -15,11 +15,10 @@ public:
     bool isSick = false;
     int incubationDaysCounter = 0;
     int sicknessDaysCounter = 0;
-    int dayOfDeath = 0;
 
 
 private:
-    bool willDie = false;
+    int dayOfDeath = 0;
 
 };
 

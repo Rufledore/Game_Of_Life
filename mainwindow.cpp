@@ -10,6 +10,14 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    /* TODOs:
+     * 1. Create a vector with the coordinates of infected cells to go only through them when make updates.
+     * 2. Separate the infection possibility between close neighbors and random cells from the map.
+     *
+     *
+     */
+
+
     ui->setupUi(this);
 //    this->setStyleSheet("background-color: black");
 
@@ -38,10 +46,12 @@ void MainWindow::updateOutpus()
 
 void MainWindow::updateInitialParameters()
 {
-    m_incubationPeriod = ui->lineEdit_incubationPeriod->text().toInt();
-    m_illnessPeriod = ui->lineEdit_illnessPeriod->text().toInt();
-    m_infectionRate = ui->lineEdit_infectionRate->text().toInt();
+    m_incubationPeriod = ui->lineEdit_incubationPeriod->text().toDouble();
+    m_illnessPeriod = ui->lineEdit_illnessPeriod->text().toDouble();
+    m_infectionRate = ui->lineEdit_infectionRate->text().toDouble();
     m_deathRate = ui->lineEdit_deathRate->text().toDouble();
 
-    qDebug() << m_incubationPeriod << ',' << m_illnessPeriod << ',' << m_infectionRate << ',' << m_deathRate;
+    m_probabilityToInfect = (m_incubationPeriod + m_illnessPeriod) / m_infectionRate;
+
+    qDebug() << m_incubationPeriod << ',' << m_illnessPeriod << ',' << m_infectionRate << ',' << m_deathRate << ',' << m_probabilityToInfect;
 }
