@@ -11,24 +11,24 @@ Person::Person()
 void Person::updateDayCounters(int incubationPeriod, int sicknessPeriod)
 {
     switch (vitalityState) {
-    case Globals::VitalityState::healty:
+    case VitalityState::healty:
         break;
-    case Globals::VitalityState::infected_incubation:
+    case VitalityState::infected_incubation:
         ++incubationDaysCounter;
         if (incubationDaysCounter == incubationPeriod) {
-            vitalityState = Globals::VitalityState::infected_sick;
+            vitalityState = VitalityState::infected_sick;
         }
         break;
-    case Globals::VitalityState::infected_sick:
+    case VitalityState::infected_sick:
         ++sicknessDaysCounter;
         if (dayOfDeath == sicknessDaysCounter) {
-            vitalityState = Globals::VitalityState::dead;
+            vitalityState = VitalityState::dead;
         }
         if (sicknessDaysCounter > sicknessPeriod) {
-            vitalityState = Globals::VitalityState::healty;
+            vitalityState = VitalityState::healty;
         }
         break;
-    case Globals::VitalityState::dead:
+    case VitalityState::dead:
         break;
     }
 //    if (isAlive && isInfected) {
@@ -54,7 +54,7 @@ void Person::infect(int sicknessPeriod, double deathRate)
 {
     double deathProbability = QRandomGenerator::global()->generateDouble() * 100;
 
-    vitalityState = Globals::VitalityState::infected_incubation;
+    vitalityState = VitalityState::infected_incubation;
     if (deathProbability < deathRate) {
         dayOfDeath = static_cast<int>(QRandomGenerator::global()->generateDouble() * sicknessPeriod);
     }

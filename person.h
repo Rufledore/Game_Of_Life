@@ -12,7 +12,7 @@ public:
 
     int incubationDaysCounter = 0;
     int sicknessDaysCounter = 0;
-    Globals::VitalityState vitalityState = Globals::VitalityState::healty;
+    VitalityState vitalityState = VitalityState::healty;
 
 
 private:

@@ -1,6 +1,6 @@
 #include "globals.h"
 
-Globals::Constants::Constants()
+Global::Constants::Constants()
 {
 
 }

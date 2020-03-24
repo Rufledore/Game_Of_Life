@@ -29,7 +29,7 @@ public:
 
     void setInitialMap();
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    void drawNthCell(QPoint currentCell, QSharedPointer<QBrush> brush);
+    void drawNthCell(QPoint currentCell, QBrush brush);
     void updateNextGeneration();
     void updateCellState(CellCoordinates currentCell);
     void drawInitialGeneration();
@@ -55,15 +55,17 @@ private:
 
 //    QSharedPointer<QHash<CellCoordinates, Person>> backgroundMap;               //A table with vitaliti states of each cell of the map. The key is QPait of coordinates.
 //    QSharedPointer<QHash<CellCoordinates, Person>> newGenerationBackgroundMap;  //A table with vitaliti states of each cell of the map. The key is QPait of coordinates.
-    QSharedPointer<QHash<CellCoordinates, Globals::VitalityState>> backgroundMap;               //A table with vitaliti states of each cell of the map. The key is QPait of coordinates.
+    QSharedPointer<QHash<CellCoordinates, VitalityState>> backgroundMap;               //A table with vitaliti states of each cell of the map. The key is QPait of coordinates.
 //    QSharedPointer<QHash<CellCoordinates, vitalityState>> newGenerationBackgroundMap;  //A table with vitaliti states of each cell of the map. The key is QPait of coordinates.
     QScopedPointer<QGraphicsScene> gameGraphicScene;                                   //A graphics scebe which present the game map
     QScopedPointer<QGraphicsView> gameGraphicView;                                     //A graphics view for presenting the game map
     QSharedPointer<QPixmap> gamePixmap;                                                //A surface where the game is painted
     QScopedPointer<QPainter> gamePainter;                                              //A tool for paint and repaint the game map
     QScopedPointer<QGraphicsPixmapItem> graphicItem;
-    QSharedPointer<QBrush> whiteBrush;
-    QSharedPointer<QBrush> blackBrush;
+    QBrush whiteBrush = QBrush(QColor(255, 255, 255));
+    QBrush blackBrush = QBrush(QColor(0, 0, 0));
+    QBrush redBrush = QBrush(QColor(255, 0, 0));
+    QBrush yellowBrush = QBrush(QColor(255, 128, 0));
     QGraphicsSceneMouseEvent* mouseEvent;
 
     void drawGeneration(generationType generation);
