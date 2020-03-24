@@ -81,6 +81,19 @@ void PopulationMap::drawInitialGeneration()
 
 void PopulationMap::drawNextGeneration(PopulationMap::InfectionMap *mapForDisplay)
 {
+    for (int row = 0; row < cellsPerRow; ++row) {
+        for (int col = 0; col < cellsPerRow; ++col) {
+            if (newGenerationBackgroundMap->value(CellCoordinates(col, row)) !=                 //If this cell is the same in the next generation it
+                backgroundMap->value(CellCoordinates(col, row))) {                              //won't be updated.
+                if (newGenerationBackgroundMap->value(CellCoordinates(col, row)) == alive) {
+                    drawNthCell(QPoint(col, row), blackBrush);
+                }
+                else {
+                    drawNthCell(QPoint(col, row), whiteBrush);
+                }
+            }
+        }
+    }
 
 }
 

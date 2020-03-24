@@ -25,6 +25,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
+    globals.cpp \
         main.cpp \
     game.cpp \
     gamemap.cpp \
@@ -35,6 +36,7 @@ SOURCES += \
 HEADERS += \
     game.h \
     gamemap.h \
+    globals.h \
     mainwindow.h \
     person.h \
     runninggamethread.h

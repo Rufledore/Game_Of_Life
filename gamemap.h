@@ -12,6 +12,7 @@
 #include <QSharedPointer>
 
 #include "person.h"
+#include "globals.h"
 
 
 class PopulationMap : public QGraphicsScene
@@ -44,7 +45,6 @@ public slots:
     void changeClickedCell();
 
 private:
-    enum vitalityState{healty, sick, dead};
     enum generationType{initial, next};
 
     int cellsPerRow;
@@ -55,7 +55,7 @@ private:
 
 //    QSharedPointer<QHash<CellCoordinates, Person>> backgroundMap;               //A table with vitaliti states of each cell of the map. The key is QPait of coordinates.
 //    QSharedPointer<QHash<CellCoordinates, Person>> newGenerationBackgroundMap;  //A table with vitaliti states of each cell of the map. The key is QPait of coordinates.
-    QSharedPointer<QHash<CellCoordinates, vitalityState>> backgroundMap;               //A table with vitaliti states of each cell of the map. The key is QPait of coordinates.
+    QSharedPointer<QHash<CellCoordinates, Globals::VitalityState>> backgroundMap;               //A table with vitaliti states of each cell of the map. The key is QPait of coordinates.
 //    QSharedPointer<QHash<CellCoordinates, vitalityState>> newGenerationBackgroundMap;  //A table with vitaliti states of each cell of the map. The key is QPait of coordinates.
     QScopedPointer<QGraphicsScene> gameGraphicScene;                                   //A graphics scebe which present the game map
     QScopedPointer<QGraphicsView> gameGraphicView;                                     //A graphics view for presenting the game map
