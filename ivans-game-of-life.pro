@@ -31,6 +31,7 @@ SOURCES += \
     gamemap.cpp \
     mainwindow.cpp \
     person.cpp \
+    randomgenerator.cpp \
     runninggamethread.cpp
 
 HEADERS += \
@@ -39,6 +40,7 @@ HEADERS += \
     globals.h \
     mainwindow.h \
     person.h \
+    randomgenerator.h \
     runninggamethread.h
 
 FORMS += \
