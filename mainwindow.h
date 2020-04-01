@@ -3,6 +3,9 @@
 
 #include <QMainWindow>
 #include <QHash>
+#include <QtCharts/QChart>
+#include <QtCharts/QLineSeries>
+#include <QtCharts/QValueAxis>
 
 #include "game.h"
 #include "gamemap.h"
@@ -36,11 +39,17 @@ private:
     // Calculated initial parameters
     double m_probabilityToInfect;
 
+    // Infection Chart
+    QSharedPointer<QtCharts::QChart> m_chart;
+    QSharedPointer<QtCharts::QLineSeries> infectionSeries;
+    QSharedPointer<QtCharts::QValueAxis> yAxis;
+    QSharedPointer<QtCharts::QValueAxis> xAxis;
+
 
 
     // Output parameters
-    int m_numberOfInfected;
-    int m_numberOfDays;
+    int m_numberOfInfected = 0;
+    int m_numberOfDays = 0;
 
     // Background and functional parameters
     QSharedPointer<InfectionMap> backgroundMap;               //A table with vitaliti states of each cell of the map. The key is QPait of coordinates.
@@ -50,6 +59,7 @@ private:
     Game m_Game;\
 
     // Methods ---------------------------------------------------------------------------------------------------------
+    void setUpChart();
     void calculateNextDay();
     void updateOutpus();
 
