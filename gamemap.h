@@ -58,7 +58,7 @@ private:
     QSharedPointer<QHash<CellCoordinates, VitalityState>> backgroundMap;               //A table with vitaliti states of each cell of the map. The key is QPait of coordinates.
 //    QSharedPointer<QHash<CellCoordinates, vitalityState>> newGenerationBackgroundMap;  //A table with vitaliti states of each cell of the map. The key is QPait of coordinates.
     QScopedPointer<QGraphicsScene> gameGraphicScene;                                   //A graphics scebe which present the game map
-    QScopedPointer<QGraphicsView> gameGraphicView;                                     //A graphics view for presenting the game map
+//    QScopedPointer<QGraphicsView> gameGraphicView;                                     //A graphics view for presenting the game map
     QSharedPointer<QPixmap> gamePixmap;                                                //A surface where the game is painted
     QScopedPointer<QPainter> gamePainter;                                              //A tool for paint and repaint the game map
     QScopedPointer<QGraphicsPixmapItem> graphicItem;
@@ -66,7 +66,8 @@ private:
     QBrush blackBrush = QBrush(QColor(0, 0, 0));
     QBrush redBrush = QBrush(QColor(255, 0, 0));
     QBrush yellowBrush = QBrush(QColor(255, 128, 0));
-    QGraphicsSceneMouseEvent* mouseEvent;
+//    QScopedPointer<QGraphicsSceneMouseEvent> mouseEvent;
+    QPoint clickedPoint;
 
     void drawGeneration(generationType generation);
 };

@@ -12,7 +12,8 @@ MainWindow::MainWindow(QWidget *parent) :
     m_chart(new QtCharts::QChart),
     infectionSeries(new QtCharts::QLineSeries),
     yAxis(new QtCharts::QValueAxis),
-    xAxis(new QtCharts::QValueAxis)
+    xAxis(new QtCharts::QValueAxis),
+    populationMap(new PopulationMap(this))
 {
     /* TODOs:
      * 1. Create a vector with the coordinates of infected cells to go only through them when make updates.
@@ -27,10 +28,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
 //    GameMap* map = new GameMap(this);
 
-    ui->field->setLayout(new QGridLayout);
-    ui->field->layout()->addWidget(&m_Game);
+//    ui->field->setLayout(new QGridLayout);
+//    ui->field->layout()->addWidget(&m_Game);
 
     setUpChart();
+
+    ui->graphicsView_map->setScene(populationMap.data());
 
     connect(ui->lineEdit_incubationPeriod, &QLineEdit::textChanged, this, &MainWindow::updateInitialParameters);
     connect(ui->lineEdit_illnessPeriod, &QLineEdit::textChanged, this, &MainWindow::updateInitialParameters);

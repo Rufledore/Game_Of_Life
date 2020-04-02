@@ -18,17 +18,17 @@ PopulationMap::PopulationMap(QWidget *parent) :
     fieldHeight((cellsPerRow + 2) * cellWidth + (cellsPerRow - 1) * cellSeparator), //(cellsPerRow * (cellWidth + cellSeparator)) + cellWidth * 2 - cellSeparator;
     backgroundMap(new QHash<CellCoordinates, VitalityState>()),                     //Map with vitaliti state of each sqare of the game map
 //    newGenerationBackgroundMap(new QHash<CellCoordinates, vitalityState>()),            //Map for modifying when the next generation is calculated
-    gameGraphicView(new QGraphicsView(this, parent)),                               //Used for visualising of the scene
+//    gameGraphicView(new QGraphicsView(this, parent)),                               //Used for visualising of the scene
     gamePixmap(new QPixmap(fieldWidth, fieldHeight)),                               //Used as a surface for painting
     gamePainter(new QPainter(gamePixmap.data())),
-    graphicItem(this->addPixmap(*gamePixmap)),
+    graphicItem(this->addPixmap(*gamePixmap))
 //    whiteBrush(new QBrush(QColor(255,255,255))),
 //    blackBrush(new QBrush(QColor(0,0,0))),
-    mouseEvent(nullptr)
+//    mouseEvent(nullptr)
 {
-    gameGraphicView->show();
+//    gameGraphicView->show();
 //    gameGraphicView->resize(fieldWidth + cellWidth, fieldHeight + cellWidth);
-    gameGraphicView->resize(950, 950);
+//    gameGraphicView->resize(950, 950);
 
 //    this->addPixmap(*gamePixmap);
 
@@ -43,7 +43,7 @@ PopulationMap::PopulationMap(QWidget *parent) :
 
 PopulationMap::~PopulationMap()
 {
-    delete mouseEvent;
+//    delete mouseEvent;
 }
 
 void PopulationMap::setInitialMap()
@@ -148,18 +148,22 @@ void PopulationMap::drawGeneration(generationType generation)
 
 void PopulationMap::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    mouseEvent = event;
-    qDebug() << mouseEvent->scenePos();
+    clickedPoint = event->scenePos().toPoint();
+//    mouseEvent = event;
+//    qDebug() << mouseEvent->scenePos();
+    qDebug() << clickedPoint;
 
     clicked();
 }
 
 void PopulationMap::changeClickedCell()
 {
-    QPoint mouseClick = mouseEvent->scenePos().toPoint();
+//    QPoint mouseClick = mouseEvent->scenePos().toPoint();
 
-    int x = (mouseClick.x() - cellWidth) / (cellWidth + cellSeparator);
-    int y = (mouseClick.y() - cellWidth) / (cellWidth + cellSeparator);
+//    int x = (mouseClick.x() - cellWidth) / (cellWidth + cellSeparator);
+//    int y = (mouseClick.y() - cellWidth) / (cellWidth + cellSeparator);
+    int x = (clickedPoint.x() - cellWidth) / (cellWidth + cellSeparator);
+    int y = (clickedPoint.y() - cellWidth) / (cellWidth + cellSeparator);
 
     VitalityState personState = backgroundMap->value(CellCoordinates(x, y));
 

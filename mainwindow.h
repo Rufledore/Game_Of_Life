@@ -56,7 +56,8 @@ private:
     QSharedPointer<InfectionMap> newGenerationBackgroundMap;  //A table with vitaliti states of each cell of the map. The key is QPait of coordinates.
 
     Ui::MainWindow *ui;
-    Game m_Game;\
+//    Game m_Game;
+    QSharedPointer<PopulationMap> populationMap;
 
     // Methods ---------------------------------------------------------------------------------------------------------
     void setUpChart();
