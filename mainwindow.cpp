@@ -13,8 +13,8 @@ MainWindow::MainWindow(QWidget *parent) :
     infectionSeries(new QtCharts::QLineSeries),
     yAxis(new QtCharts::QValueAxis),
     xAxis(new QtCharts::QValueAxis),
-    backgroundMap(new InfectionMap),
-    populationMap(new PopulationMap(this))
+    infectedPopulationMap(new InfectionMap),
+    populationMap(new PopulationMap(this, m_numberOfCellsPerRow))
 {
     /* TODOs:
      * 1. Create a vector with the coordinates of infected cells to go only through them when make updates.
@@ -43,6 +43,22 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(populationMap.data(), &PopulationMap::clicked, this, &MainWindow::changePersonState);
 
+
+/*------------------------------------------------------------------------------------*/
+    infectedPopulationMap->insert(CellCoordinates(0,1), Person());
+    (*infectedPopulationMap.data())[CellCoordinates(0,1)].infect(20, 0.01);
+    infectedPopulationMap->insert(CellCoordinates(100,100), Person());
+    (*infectedPopulationMap.data())[CellCoordinates(100,100)].infect(20, 0.01);
+    infectedPopulationMap->insert(CellCoordinates(1,1), Person());
+    (*infectedPopulationMap.data())[CellCoordinates(1,1)].infect(20, 0.01);
+    infectedPopulationMap->insert(CellCoordinates(200,129), Person());
+    (*infectedPopulationMap.data())[CellCoordinates(200,129)].infect(20, 0.01);
+
+    populationMap->drawNextGeneration(infectedPopulationMap.data());
+
+    m_numberOfInfected = infectedPopulationMap->size();
+    ui->label_indicator_numberOfInfections->setNum(m_numberOfInfected);
+/*-------------------------------------------------------------------------------------------*/
 }
 
 MainWindow::~MainWindow()
@@ -115,7 +131,7 @@ void MainWindow::updateInitialParameters()
 
 void MainWindow::changePersonState(MainWindow::CellCoordinates cell)
 {
-    Person* clickedPerson = &(*backgroundMap)[cell]; // If the key is not in the map it automatically generates.
+    Person* clickedPerson = &(*infectedPopulationMap)[cell]; // If the key is not in the map it is automatically generated.
     switch (clickedPerson->vitalityState) {
     case VitalityState::healty:
         m_numberOfInfected++;
@@ -130,5 +146,5 @@ void MainWindow::changePersonState(MainWindow::CellCoordinates cell)
     }
     clickedPerson->updateVitalityState();
     ui->label_indicator_numberOfInfections->setNum(m_numberOfInfected);
-    qDebug() << backgroundMap->size();
+    qDebug() << infectedPopulationMap->size();
 }

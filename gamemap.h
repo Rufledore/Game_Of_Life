@@ -25,7 +25,7 @@ typedef QHash<CellCoordinates, Person> InfectionMap;
 
 public:
 
-    explicit PopulationMap(QWidget *parent = nullptr);
+    explicit PopulationMap(QWidget *parent = nullptr, int numberOfCellsPerRow = 120);
     ~PopulationMap();
 
     void setInitialMap();

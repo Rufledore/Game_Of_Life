@@ -9,9 +9,9 @@
 #include <QPoint>
 #include <QPair>
 
-PopulationMap::PopulationMap(QWidget *parent) :
+PopulationMap::PopulationMap(QWidget *parent, int numberOfCellsPerRow) :
     QGraphicsScene(parent),
-    cellsPerRow(129),
+    cellsPerRow(numberOfCellsPerRow),
     cellWidth(6),
     cellSeparator(cellWidth < 10 ? 1 : cellWidth/10),
     fieldWidth((cellsPerRow + 2) * cellWidth + (cellsPerRow - 1) * cellSeparator),  //WIdth = (Num of cells * width of cell) + (Num of cells - 1) * separator) + 2 cells for the frame;
@@ -89,32 +89,41 @@ void PopulationMap::drawInitialGeneration()
     }
 }
 
-void PopulationMap::drawNextGeneration(PopulationMap::InfectionMap *populationForDisplay)
+void PopulationMap::drawNextGeneration(PopulationMap::InfectionMap *infectedPopulation)
 {
-    for (int row = 0; row < cellsPerRow; ++row) {
-        for (int col = 0; col < cellsPerRow; ++col) {
-            Person person = populationForDisplay->value(CellCoordinates(col, row));
+    InfectionMap::const_iterator infectedPerson;
+    for (infectedPerson = infectedPopulation->constBegin();
+         infectedPerson != infectedPopulation->constEnd();
+         ++infectedPerson) {
 
-            if (person.vitalityState != backgroundMap->value(CellCoordinates(col, row))) {      //If this person is the with same state in
-                switch (person.vitalityState) {
-                case VitalityState::healty:
-                    drawNthCell(CellCoordinates(col, row), whiteBrush);
-                    break;
-                case VitalityState::infected_incubation:
-                    drawNthCell(CellCoordinates(col, row), yellowBrush);
-                    break;
-                case VitalityState::infected_sick:
-                    drawNthCell(CellCoordinates(col, row), redBrush);
-                    break;
-                case VitalityState::dead:
-                    drawNthCell(CellCoordinates(col, row), blackBrush);
-                    break;
-                default:
-                    drawNthCell(CellCoordinates(col, row), whiteBrush);
-                }                                                                              //next generation it won't be updated.
+        CellCoordinates personPosition = infectedPerson.key();
+        Person person = infectedPerson.value();
+
+        if (person.vitalityState != backgroundMap->value(personPosition)) {      //If this person is the with same state in
+            switch (person.vitalityState) {
+            case VitalityState::healty:
+                drawNthCell(personPosition, whiteBrush);
+                backgroundMap->insert(personPosition, VitalityState::healty);
+                break;
+            case VitalityState::infected_incubation:
+                drawNthCell(personPosition, yellowBrush);
+                backgroundMap->insert(personPosition, VitalityState::infected_incubation);
+                break;
+            case VitalityState::infected_sick:
+                drawNthCell(personPosition, redBrush);
+                backgroundMap->insert(personPosition, VitalityState::infected_sick);
+                break;
+            case VitalityState::dead:
+                drawNthCell(personPosition, blackBrush);
+                backgroundMap->insert(personPosition, VitalityState::dead);
+                break;
+            default:
+                drawNthCell(personPosition, whiteBrush);
+                backgroundMap->insert(personPosition, VitalityState::healty);
             }
         }
     }
+    graphicItem->setPixmap(*gamePixmap);
 }
 
 /*

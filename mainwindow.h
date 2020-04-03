@@ -53,10 +53,11 @@ private:
     int m_numberOfDays = 0;
 
     // Background and functional parameters
-    QSharedPointer<InfectionMap> backgroundMap;               //A table with vitaliti states of each cell of the map. The key is QPait of coordinates.
+    QSharedPointer<InfectionMap> infectedPopulationMap;               //A table with vitaliti states of each cell of the map. The key is QPait of coordinates.
     QSharedPointer<InfectionMap> newGenerationBackgroundMap;  //A table with vitaliti states of each cell of the map. The key is QPait of coordinates.
 
-//    Game m_Game;
+    // Graphical map
+    int m_numberOfCellsPerRow = 129;
     QSharedPointer<PopulationMap> populationMap;
 
     // Methods ---------------------------------------------------------------------------------------------------------
