@@ -19,7 +19,8 @@ class PopulationMap : public QGraphicsScene
 {
     Q_OBJECT
 
-typedef QPair<int, int> CellCoordinates;
+//typedef QPoint CellCoordinates;
+typedef QPair<int, int> CellCoordinates; // QHash doesn't work with QPoint
 typedef QHash<CellCoordinates, Person> InfectionMap;
 
 public:
@@ -29,7 +30,7 @@ public:
 
     void setInitialMap();
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    void drawNthCell(QPoint currentCell, QBrush brush);
+    void drawNthCell(CellCoordinates currentCell, QBrush brush);
     void updateNextGeneration();
     void updateCellState(CellCoordinates currentCell);
     void drawInitialGeneration();
@@ -39,10 +40,10 @@ public:
     QPoint getPixelInCurrentCell(QPoint currentCell);
 
 signals:
-    void clicked();
+    void clicked(CellCoordinates cell);
 
 public slots:
-    void changeClickedCell();
+    void changeClickedCell(CellCoordinates cell);
 
 private:
     enum generationType{initial, next};

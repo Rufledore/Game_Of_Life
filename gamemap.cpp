@@ -71,19 +71,19 @@ void PopulationMap::drawInitialGeneration()
         for (int col = 0; col < cellsPerRow; ++col) {
             switch (backgroundMap->value(CellCoordinates(col, row))) {
             case VitalityState::healty:
-                drawNthCell(QPoint(col, row), whiteBrush);
+                drawNthCell(CellCoordinates(col, row), whiteBrush);
                 break;
             case VitalityState::infected_incubation:
-                drawNthCell(QPoint(col, row), yellowBrush);
+                drawNthCell(CellCoordinates(col, row), yellowBrush);
                 break;
             case VitalityState::infected_sick:
-                drawNthCell(QPoint(col, row), redBrush);
+                drawNthCell(CellCoordinates(col, row), redBrush);
                 break;
             case VitalityState::dead:
-                drawNthCell(QPoint(col, row), blackBrush);
+                drawNthCell(CellCoordinates(col, row), blackBrush);
                 break;
             default:
-                drawNthCell(QPoint(col, row), whiteBrush);
+                drawNthCell(CellCoordinates(col, row), whiteBrush);
             }
         }
     }
@@ -98,19 +98,19 @@ void PopulationMap::drawNextGeneration(PopulationMap::InfectionMap *populationFo
             if (person.vitalityState != backgroundMap->value(CellCoordinates(col, row))) {      //If this person is the with same state in
                 switch (person.vitalityState) {
                 case VitalityState::healty:
-                    drawNthCell(QPoint(col, row), whiteBrush);
+                    drawNthCell(CellCoordinates(col, row), whiteBrush);
                     break;
                 case VitalityState::infected_incubation:
-                    drawNthCell(QPoint(col, row), yellowBrush);
+                    drawNthCell(CellCoordinates(col, row), yellowBrush);
                     break;
                 case VitalityState::infected_sick:
-                    drawNthCell(QPoint(col, row), redBrush);
+                    drawNthCell(CellCoordinates(col, row), redBrush);
                     break;
                 case VitalityState::dead:
-                    drawNthCell(QPoint(col, row), blackBrush);
+                    drawNthCell(CellCoordinates(col, row), blackBrush);
                     break;
                 default:
-                    drawNthCell(QPoint(col, row), whiteBrush);
+                    drawNthCell(CellCoordinates(col, row), whiteBrush);
                 }                                                                              //next generation it won't be updated.
             }
         }
@@ -149,43 +149,44 @@ void PopulationMap::drawGeneration(generationType generation)
 void PopulationMap::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     clickedPoint = event->scenePos().toPoint();
-//    mouseEvent = event;
-//    qDebug() << mouseEvent->scenePos();
     qDebug() << clickedPoint;
+    int x = (clickedPoint.x() - cellWidth) / (cellWidth + cellSeparator);
+    if (x >= cellsPerRow) x = cellsPerRow - 1;
+    int y = (clickedPoint.y() - cellWidth) / (cellWidth + cellSeparator);
+    if (y >= cellsPerRow) y = cellsPerRow - 1;
 
-    clicked();
+    clicked(CellCoordinates(x, y));
 }
 
-void PopulationMap::changeClickedCell()
+void PopulationMap::changeClickedCell(CellCoordinates cell)
 {
 //    QPoint mouseClick = mouseEvent->scenePos().toPoint();
 
 //    int x = (mouseClick.x() - cellWidth) / (cellWidth + cellSeparator);
 //    int y = (mouseClick.y() - cellWidth) / (cellWidth + cellSeparator);
-    int x = (clickedPoint.x() - cellWidth) / (cellWidth + cellSeparator);
-    int y = (clickedPoint.y() - cellWidth) / (cellWidth + cellSeparator);
 
-    VitalityState personState = backgroundMap->value(CellCoordinates(x, y));
+
+    VitalityState personState = backgroundMap->value(cell);
 
     switch (personState) {
     case VitalityState::healty:
-        (*backgroundMap)[CellCoordinates(x, y)] = VitalityState::infected_incubation;
-        drawNthCell(QPoint(x, y), yellowBrush);
+        (*backgroundMap)[cell] = VitalityState::infected_incubation;
+        drawNthCell(cell, yellowBrush);
         break;
     case VitalityState::infected_incubation:
-        (*backgroundMap)[CellCoordinates(x, y)] = VitalityState::infected_sick;
-        drawNthCell(QPoint(x, y), redBrush);
+        (*backgroundMap)[cell] = VitalityState::infected_sick;
+        drawNthCell(cell, redBrush);
         break;
     case VitalityState::infected_sick:
-        (*backgroundMap)[CellCoordinates(x, y)] = VitalityState::dead;
-        drawNthCell(QPoint(x, y), blackBrush);
+        (*backgroundMap)[cell] = VitalityState::dead;
+        drawNthCell(cell, blackBrush);
         break;
     case VitalityState::dead:
-        (*backgroundMap)[CellCoordinates(x, y)] = VitalityState::healty;
-        drawNthCell(QPoint(x, y), whiteBrush);
+        (*backgroundMap)[cell] = VitalityState::healty;
+        drawNthCell(cell, whiteBrush);
         break;
     default:
-        drawNthCell(QPoint(x, y), whiteBrush);
+        drawNthCell(cell, whiteBrush);
     }
 
 /*
@@ -201,13 +202,16 @@ void PopulationMap::changeClickedCell()
     graphicItem->setPixmap(*gamePixmap);
 }
 
-void PopulationMap::drawNthCell(QPoint currentCell, QBrush brush)
+void PopulationMap::drawNthCell(CellCoordinates currentCell, QBrush brush)
 {
+    int x = currentCell.first;
+    int y = currentCell.second;
+
     QPoint topLeft(0, 0);
     QPoint bottomRight(0, 0);
 
-    topLeft.setX((currentCell.x() + 1) * cellWidth + (currentCell.x()) * cellSeparator);
-    topLeft.setY((currentCell.y() + 1) * cellWidth + (currentCell.y()) * cellSeparator);
+    topLeft.setX((x + 1) * cellWidth + x * cellSeparator);
+    topLeft.setY((y + 1) * cellWidth + y * cellSeparator);
 
     bottomRight.setX(topLeft.x() + cellWidth);
     bottomRight.setY(topLeft.y() + cellWidth);

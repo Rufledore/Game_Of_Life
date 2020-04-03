@@ -28,6 +28,7 @@ public:
     ~MainWindow();
 
 private:
+    Ui::MainWindow *ui;
     // Simulation parameters
 
     // Input parameters
@@ -55,7 +56,6 @@ private:
     QSharedPointer<InfectionMap> backgroundMap;               //A table with vitaliti states of each cell of the map. The key is QPait of coordinates.
     QSharedPointer<InfectionMap> newGenerationBackgroundMap;  //A table with vitaliti states of each cell of the map. The key is QPait of coordinates.
 
-    Ui::MainWindow *ui;
 //    Game m_Game;
     QSharedPointer<PopulationMap> populationMap;
 
@@ -67,7 +67,7 @@ private:
 
 private slots:
     void updateInitialParameters();
-
+    void changePersonState(CellCoordinates cell);
 
 };
 

@@ -9,6 +9,7 @@ public:
     Person();
     void updateDayCounters(int incubationPeriod, int illnessPeriod);
     void infect(int sicknessPeriod, double deathRate);
+    void updateVitalityState();
 
     int incubationDaysCounter = 0;
     int sicknessDaysCounter = 0;

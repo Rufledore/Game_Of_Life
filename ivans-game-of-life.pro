@@ -32,7 +32,8 @@ SOURCES += \
     mainwindow.cpp \
     person.cpp \
     randomgenerator.cpp \
-    runninggamethread.cpp
+    runninggamethread.cpp \
+    simulationrunner.cpp
 
 HEADERS += \
     game.h \
@@ -41,7 +42,8 @@ HEADERS += \
     mainwindow.h \
     person.h \
     randomgenerator.h \
-    runninggamethread.h
+    runninggamethread.h \
+    simulationrunner.h
 
 FORMS += \
     mainwindow.ui

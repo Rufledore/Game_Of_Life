@@ -59,3 +59,22 @@ void Person::infect(int sicknessPeriod, double deathRate)
         dayOfDeath = static_cast<int>(QRandomGenerator::global()->generateDouble() * sicknessPeriod);
     }
 }
+
+void Person::updateVitalityState()
+{
+    switch (vitalityState) {
+    case VitalityState::healty:
+        vitalityState = VitalityState::infected_incubation;
+        break;
+    case VitalityState::infected_incubation:
+        vitalityState = VitalityState::infected_sick;
+        break;
+    case VitalityState::infected_sick:
+        vitalityState = VitalityState::dead;
+        break;
+    case VitalityState::dead:
+        vitalityState = VitalityState::healty;
+        break;
+    }
+
+}

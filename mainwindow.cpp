@@ -13,6 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
     infectionSeries(new QtCharts::QLineSeries),
     yAxis(new QtCharts::QValueAxis),
     xAxis(new QtCharts::QValueAxis),
+    backgroundMap(new InfectionMap),
     populationMap(new PopulationMap(this))
 {
     /* TODOs:
@@ -40,6 +41,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->lineEdit_infectionRate, &QLineEdit::textChanged, this, &MainWindow::updateInitialParameters);
     connect(ui->lineEdit_deathRate, &QLineEdit::textChanged, this, &MainWindow::updateInitialParameters);
 
+    connect(populationMap.data(), &PopulationMap::clicked, this, &MainWindow::changePersonState);
+
 }
 
 MainWindow::~MainWindow()
@@ -49,12 +52,12 @@ MainWindow::~MainWindow()
 
 void MainWindow::setUpChart()
 {
-    infectionSeries->append(0, 2);
-    infectionSeries->append(2, 4);
-    infectionSeries->append(3, 3);
-    infectionSeries->append(4, 5);
-    m_numberOfDays = 4;
-    m_numberOfInfected = 5;
+//    infectionSeries->append(0, 2);
+//    infectionSeries->append(2, 4);
+//    infectionSeries->append(3, 3);
+//    infectionSeries->append(4, 5);
+//    m_numberOfDays = 4;
+//    m_numberOfInfected = 5;
 
     m_chart->legend()->hide();
     m_chart->addSeries(infectionSeries.get());
@@ -108,4 +111,24 @@ void MainWindow::updateInitialParameters()
     m_probabilityToInfect = (m_incubationPeriod + m_illnessPeriod) / m_infectionRate;
 
     qDebug() << m_incubationPeriod << ',' << m_illnessPeriod << ',' << m_infectionRate << ',' << m_deathRate << ',' << m_probabilityToInfect;
+}
+
+void MainWindow::changePersonState(MainWindow::CellCoordinates cell)
+{
+    Person* clickedPerson = &(*backgroundMap)[cell]; // If the key is not in the map it automatically generates.
+    switch (clickedPerson->vitalityState) {
+    case VitalityState::healty:
+        m_numberOfInfected++;
+        break;
+    case VitalityState::infected_incubation:
+        break;
+    case VitalityState::infected_sick:
+        m_numberOfInfected--;
+        break;
+    case VitalityState::dead:
+        break;
+    }
+    clickedPerson->updateVitalityState();
+    ui->label_indicator_numberOfInfections->setNum(m_numberOfInfected);
+    qDebug() << backgroundMap->size();
 }
