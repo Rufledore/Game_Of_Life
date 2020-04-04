@@ -89,7 +89,7 @@ void PopulationMap::drawInitialGeneration()
     }
 }
 
-void PopulationMap::drawNextGeneration(PopulationMap::InfectionMap *infectedPopulation)
+void PopulationMap::drawNextGeneration(InfectionMap *infectedPopulation)
 {
     InfectionMap::const_iterator infectedPerson;
     for (infectedPerson = infectedPopulation->constBegin();
@@ -209,6 +209,11 @@ void PopulationMap::changeClickedCell(CellCoordinates cell)
 */
 //    this->addPixmap(*gamePixmap);
     graphicItem->setPixmap(*gamePixmap);
+}
+
+void PopulationMap::updatePopulationStatus(InfectionMap *map)
+{
+    drawNextGeneration(map);
 }
 
 void PopulationMap::drawNthCell(CellCoordinates currentCell, QBrush brush)

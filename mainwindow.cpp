@@ -14,7 +14,8 @@ MainWindow::MainWindow(QWidget *parent) :
     yAxis(new QtCharts::QValueAxis),
     xAxis(new QtCharts::QValueAxis),
     infectedPopulationMap(new InfectionMap),
-    populationMap(new PopulationMap(this, m_numberOfCellsPerRow))
+    populationMap(new PopulationMap(this, m_numberOfCellsPerRow)),
+    runner(new SimulationRunner)
 {
     /* TODOs:
      * 1. Create a vector with the coordinates of infected cells to go only through them when make updates.
@@ -42,6 +43,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->lineEdit_deathRate, &QLineEdit::textChanged, this, &MainWindow::updateInitialParameters);
 
     connect(populationMap.data(), &PopulationMap::clicked, this, &MainWindow::changePersonState);
+    connect(runner.data(), &SimulationRunner::populationStatusUpdated, populationMap.data(), &PopulationMap::updatePopulationStatus);
 
 
 /*------------------------------------------------------------------------------------*/
@@ -54,7 +56,9 @@ MainWindow::MainWindow(QWidget *parent) :
     infectedPopulationMap->insert(CellCoordinates(200,129), Person());
     (*infectedPopulationMap.data())[CellCoordinates(200,129)].infect(20, 0.01);
 
-    populationMap->drawNextGeneration(infectedPopulationMap.data());
+//    populationMap->drawNextGeneration(infectedPopulationMap.data());
+
+    runner->updateMap();
 
     m_numberOfInfected = infectedPopulationMap->size();
     ui->label_indicator_numberOfInfections->setNum(m_numberOfInfected);
@@ -129,7 +133,7 @@ void MainWindow::updateInitialParameters()
     qDebug() << m_incubationPeriod << ',' << m_illnessPeriod << ',' << m_infectionRate << ',' << m_deathRate << ',' << m_probabilityToInfect;
 }
 
-void MainWindow::changePersonState(MainWindow::CellCoordinates cell)
+void MainWindow::changePersonState(CellCoordinates cell)
 {
     Person* clickedPerson = &(*infectedPopulationMap)[cell]; // If the key is not in the map it is automatically generated.
     switch (clickedPerson->vitalityState) {

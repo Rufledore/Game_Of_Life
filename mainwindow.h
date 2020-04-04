@@ -10,6 +10,8 @@
 #include "game.h"
 #include "gamemap.h"
 #include "person.h"
+#include "simulationrunner.h"
+#include "globals.h"
 
 namespace Ui {
 class MainWindow;
@@ -19,8 +21,8 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
-typedef QPair<int, int> CellCoordinates;
-typedef QHash<CellCoordinates, Person> InfectionMap;
+//typedef QPair<int, int> CellCoordinates;
+//typedef QHash<CellCoordinates, Person> InfectionMap;
 
 
 public:
@@ -59,6 +61,7 @@ private:
     // Graphical map
     int m_numberOfCellsPerRow = 129;
     QSharedPointer<PopulationMap> populationMap;
+    QSharedPointer<SimulationRunner> runner;
 
     // Methods ---------------------------------------------------------------------------------------------------------
     void setUpChart();

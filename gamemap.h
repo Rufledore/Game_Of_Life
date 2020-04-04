@@ -20,8 +20,8 @@ class PopulationMap : public QGraphicsScene
     Q_OBJECT
 
 //typedef QPoint CellCoordinates;
-typedef QPair<int, int> CellCoordinates; // QHash doesn't work with QPoint
-typedef QHash<CellCoordinates, Person> InfectionMap;
+//typedef QPair<int, int> CellCoordinates; // QHash doesn't work with QPoint
+//typedef QHash<CellCoordinates, Person> InfectionMap;
 
 public:
 
@@ -44,6 +44,7 @@ signals:
 
 public slots:
     void changeClickedCell(CellCoordinates cell);
+    void updatePopulationStatus(InfectionMap* map);
 
 private:
     enum generationType{initial, next};

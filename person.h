@@ -3,6 +3,7 @@
 
 #include "globals.h"
 
+
 class Person
 {
 public:
@@ -21,4 +22,6 @@ private:
 
 };
 
+typedef QPair<int, int> CellCoordinates; // QHash doesn't work with QPoint
+typedef QHash<CellCoordinates, Person> InfectionMap;
 #endif // PERSON_H
