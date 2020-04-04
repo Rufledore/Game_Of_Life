@@ -1,4 +1,4 @@
-#include "gamemap.h"
+#include "populationmap.h"
 #include <QDebug>
 #include <QGraphicsScene>
 #include <QPainter>
@@ -17,22 +17,11 @@ PopulationMap::PopulationMap(QWidget *parent, int numberOfCellsPerRow) :
     fieldWidth((cellsPerRow + 2) * cellWidth + (cellsPerRow - 1) * cellSeparator),  //WIdth = (Num of cells * width of cell) + (Num of cells - 1) * separator) + 2 cells for the frame;
     fieldHeight((cellsPerRow + 2) * cellWidth + (cellsPerRow - 1) * cellSeparator), //(cellsPerRow * (cellWidth + cellSeparator)) + cellWidth * 2 - cellSeparator;
     backgroundMap(new QHash<CellCoordinates, VitalityState>()),                     //Map with vitaliti state of each sqare of the game map
-//    newGenerationBackgroundMap(new QHash<CellCoordinates, vitalityState>()),            //Map for modifying when the next generation is calculated
-//    gameGraphicView(new QGraphicsView(this, parent)),                               //Used for visualising of the scene
     gamePixmap(new QPixmap(fieldWidth, fieldHeight)),                               //Used as a surface for painting
     gamePainter(new QPainter(gamePixmap.data())),
     graphicItem(this->addPixmap(*gamePixmap))
-//    whiteBrush(new QBrush(QColor(255,255,255))),
-//    blackBrush(new QBrush(QColor(0,0,0))),
-//    mouseEvent(nullptr)
 {
-//    gameGraphicView->show();
-//    gameGraphicView->resize(fieldWidth + cellWidth, fieldHeight + cellWidth);
-//    gameGraphicView->resize(950, 950);
 
-//    this->addPixmap(*gamePixmap);
-
-//    this->setInitialMap();
     this->drawInitialGeneration();
 
     graphicItem->setPixmap(*gamePixmap);
@@ -43,10 +32,9 @@ PopulationMap::PopulationMap(QWidget *parent, int numberOfCellsPerRow) :
 
 PopulationMap::~PopulationMap()
 {
-//    delete mouseEvent;
 }
 
-void PopulationMap::setInitialMap()
+void PopulationMap::OBSOLATE_setInitialMap()
 {
     /* Use this function if you want to automatically set initial conditions on the population.
 
@@ -125,35 +113,6 @@ void PopulationMap::drawNextGeneration(InfectionMap *infectedPopulation)
     }
     graphicItem->setPixmap(*gamePixmap);
 }
-
-/*
-void PopulationMap::drawGeneration(generationType generation)
-{
-    for (int row = 0; row < cellsPerRow; ++row) {
-        for (int col = 0; col < cellsPerRow; ++col) {
-            if (generation == initial) {
-                if (backgroundMap->value(CellCoordinates(col, row)) == sick) {
-                    drawNthCell(QPoint(col, row), blackBrush);
-                }
-                else {
-                    drawNthCell(QPoint(col, row), whiteBrush);
-                }
-            } else if (generation == next) {
-                if (newGenerationBackgroundMap->value(CellCoordinates(col, row)) !=                 //If this cell is the same in the next generation it
-                    backgroundMap->value(CellCoordinates(col, row))) {                              //won't be updated.
-                    if (newGenerationBackgroundMap->value(CellCoordinates(col, row)) == alive) {
-                        drawNthCell(QPoint(col, row), blackBrush);
-                    }
-                    else {
-                        drawNthCell(QPoint(col, row), whiteBrush);
-                    }
-                }
-            }
-        }
-    }
-    graphicItem->setPixmap(*gamePixmap);
-}
-*/
 
 void PopulationMap::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
@@ -236,7 +195,7 @@ void PopulationMap::drawNthCell(CellCoordinates currentCell, QBrush brush)
 
 }
 
-void PopulationMap::updateNextGeneration()
+void PopulationMap::OBSOLATE_updateNextGeneration()
 {
 // foreach can be implemented
 //    QHash<CellCoordinates, vitalityState> temporaryMap = *backgroundMap;
@@ -255,7 +214,7 @@ void PopulationMap::updateNextGeneration()
 */
 }
 
-void PopulationMap::updateCellState(CellCoordinates currentCell)
+void PopulationMap::OBSOLATE_updateCellState(CellCoordinates currentCell)
 {
     /*
     int lifeCounter = 0;                                                //The algorithm will always count the current cell

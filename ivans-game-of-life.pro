@@ -27,22 +27,18 @@ CONFIG += c++11
 SOURCES += \
     globals.cpp \
         main.cpp \
-    game.cpp \
-    gamemap.cpp \
     mainwindow.cpp \
     person.cpp \
+    populationmap.cpp \
     randomgenerator.cpp \
-    runninggamethread.cpp \
     simulationrunner.cpp
 
 HEADERS += \
-    game.h \
-    gamemap.h \
     globals.h \
     mainwindow.h \
     person.h \
+    populationmap.h \
     randomgenerator.h \
-    runninggamethread.h \
     simulationrunner.h
 
 FORMS += \

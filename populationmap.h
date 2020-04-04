@@ -1,5 +1,5 @@
-#ifndef WIDGET_H
-#define WIDGET_H
+#ifndef POPULATIONMAP_H
+#define POPULATIONMAP_H
 
 #include <QWidget>
 #include <QGraphicsScene>
@@ -19,23 +19,18 @@ class PopulationMap : public QGraphicsScene
 {
     Q_OBJECT
 
-//typedef QPoint CellCoordinates;
-//typedef QPair<int, int> CellCoordinates; // QHash doesn't work with QPoint
-//typedef QHash<CellCoordinates, Person> InfectionMap;
-
 public:
 
     explicit PopulationMap(QWidget *parent = nullptr, int numberOfCellsPerRow = 120);
     ~PopulationMap();
 
-    void setInitialMap();
+    void OBSOLATE_setInitialMap();
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void drawNthCell(CellCoordinates currentCell, QBrush brush);
-    void updateNextGeneration();
-    void updateCellState(CellCoordinates currentCell);
+    void OBSOLATE_updateNextGeneration();
+    void OBSOLATE_updateCellState(CellCoordinates currentCell);
     void drawInitialGeneration();
     void drawNextGeneration(InfectionMap *mapForDisplay);
-//    QVector<QPoint> getPixelsFromCellsNighbors(QPoint currentCell);
     QVector<QPoint> getCellsNighbors(CellCoordinates currentCell);
     QPoint getPixelInCurrentCell(QPoint currentCell);
 
@@ -47,20 +42,14 @@ public slots:
     void updatePopulationStatus(InfectionMap* map);
 
 private:
-    enum generationType{initial, next};
-
     int cellsPerRow;
     int cellWidth;
     int cellSeparator;
     int fieldWidth;
     int fieldHeight;
 
-//    QSharedPointer<QHash<CellCoordinates, Person>> backgroundMap;               //A table with vitaliti states of each cell of the map. The key is QPait of coordinates.
-//    QSharedPointer<QHash<CellCoordinates, Person>> newGenerationBackgroundMap;  //A table with vitaliti states of each cell of the map. The key is QPait of coordinates.
     QSharedPointer<QHash<CellCoordinates, VitalityState>> backgroundMap;               //A table with vitaliti states of each cell of the map. The key is QPait of coordinates.
-//    QSharedPointer<QHash<CellCoordinates, vitalityState>> newGenerationBackgroundMap;  //A table with vitaliti states of each cell of the map. The key is QPait of coordinates.
     QScopedPointer<QGraphicsScene> gameGraphicScene;                                   //A graphics scebe which present the game map
-//    QScopedPointer<QGraphicsView> gameGraphicView;                                     //A graphics view for presenting the game map
     QSharedPointer<QPixmap> gamePixmap;                                                //A surface where the game is painted
     QScopedPointer<QPainter> gamePainter;                                              //A tool for paint and repaint the game map
     QScopedPointer<QGraphicsPixmapItem> graphicItem;
@@ -68,11 +57,8 @@ private:
     QBrush blackBrush = QBrush(QColor(0, 0, 0));
     QBrush redBrush = QBrush(QColor(255, 0, 0));
     QBrush yellowBrush = QBrush(QColor(255, 128, 0));
-//    QScopedPointer<QGraphicsSceneMouseEvent> mouseEvent;
     QPoint clickedPoint;
-
-    void drawGeneration(generationType generation);
 };
 
 
-#endif // WIDGET_H
+#endif // POPULATIONMAP_H

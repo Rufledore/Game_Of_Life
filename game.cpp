@@ -1,5 +1,5 @@
 #include "game.h"
-#include "gamemap.h"
+#include "populationmap.h"
 #include "runninggamethread.h"
 #include <QTimer>
 #include <thread>
@@ -36,7 +36,7 @@ void Game::runningGame()
     while (gameIsStarted)
     {
         int i;
-        map->updateNextGeneration();
+        map->OBSOLATE_updateNextGeneration();
         this->show();
         QThread::msleep(10);
 //        std::this_thread::sleep_for(std::chrono::milliseconds(300));

@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include <QKeyEvent>
-#include "gamemap.h"
+#include "populationmap.h"
 #include <thread>
 
 class Game : public QWidget

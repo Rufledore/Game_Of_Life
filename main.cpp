@@ -1,6 +1,6 @@
 #include <QApplication>
 #include "mainwindow.h"
-#include "gamemap.h"
+#include "populationmap.h"
 #include "game.h"
 
 int main(int argc, char *argv[])
