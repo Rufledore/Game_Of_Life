@@ -1,6 +1,3 @@
 #include "globals.h"
 
-Global::Constants::Constants()
-{
-
-}
+const int Constants::numberOfCellsPerRow = 129;

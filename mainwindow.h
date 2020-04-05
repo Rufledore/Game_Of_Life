@@ -35,7 +35,6 @@ private:
     QSharedPointer<QtCharts::QValueAxis> xAxis;
 
     // Graphical map
-    int m_numberOfCellsPerRow = 129;
     QSharedPointer<PopulationMap> populationMap;
 
     // The background object that runs the simulation.

@@ -5,27 +5,8 @@
 #include <QSharedPointer>
 
 #include <person.h>
+#include <randomgenerator.h>
 
-struct InputPerameters {
-
-    // Input parameters
-    double incubationPeriodMin = 0;
-    double incubationPeriodMax = 0;
-    double illnessPeriodMin = 0;
-    double illnessPeriodMax = 0;
-    double infectionRateMin = 0;
-    double infectionRateMax = 0;
-    double deathRateMin = 0;
-    double deathRateMax = 0;
-};
-
-struct OutputParameters {
-
-    // Output parameters
-    int numberOfInfections = 0;
-    int numberOfDays = 0;
-    int numberOfDeaths = 0;
-};
 
 class SimulationRunner : public QObject
 {
@@ -33,17 +14,23 @@ class SimulationRunner : public QObject
 public:
     explicit SimulationRunner(QObject *parent = nullptr);
 
-
-
     // Map of infected people.
     QSharedPointer<InfectionMap> infectedPopulationMap;               //A table with vitaliti states of each cell of the map. The key is QPait of coordinates.
+    QList<CellCoordinates> keysOfInfectors;
+
+    // Simulation methods:
+    void updateInfectionsForTheDay();
+    QList<CellCoordinates> findPeopleInfectedBy(const Person* infector);
 
     void updateMap();
     void UpdateInputParameters(InputPerameters* parameters);
+
+
+    // Getters
     OutputParameters getOutputParameters();
 
 signals:
-    void populationStatusUpdated(InfectionMap* map);
+    void populationStatusUpdated(const InfectionMap* map);
     void updatedOutputParameters(OutputParameters* parameters);
 
 public slots:
@@ -52,6 +39,9 @@ public slots:
 private:
     InputPerameters inputParameters;
     OutputParameters outputParameters;
+    RandomGenerator randomGenerator;
+
+    int peoplePerRow = Constants::numberOfCellsPerRow;
 
 private slots:
 };

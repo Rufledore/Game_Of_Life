@@ -21,7 +21,7 @@ class PopulationMap : public QGraphicsScene
 
 public:
 
-    explicit PopulationMap(QWidget *parent = nullptr, int numberOfCellsPerRow = 120);
+    explicit PopulationMap(QWidget *parent = nullptr);
     ~PopulationMap();
 
     void OBSOLATE_setInitialMap();
@@ -30,7 +30,7 @@ public:
     void OBSOLATE_updateNextGeneration();
     void OBSOLATE_updateCellState(CellCoordinates currentCell);
     void drawInitialGeneration();
-    void drawNextGeneration(InfectionMap *mapForDisplay);
+    void drawNextGeneration(const InfectionMap *mapForDisplay);
     QVector<QPoint> getCellsNighbors(CellCoordinates currentCell);
     QPoint getPixelInCurrentCell(QPoint currentCell);
 
@@ -39,10 +39,10 @@ signals:
 
 public slots:
     void changeClickedCell(CellCoordinates cell);
-    void updatePopulationStatus(InfectionMap* map);
+    void updatePopulationStatus(const InfectionMap* map);
 
 private:
-    int cellsPerRow;
+    int cellsPerRow = Constants::numberOfCellsPerRow;
     int cellWidth;
     int cellSeparator;
     int fieldWidth;

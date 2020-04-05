@@ -1,5 +1,6 @@
 #include <QRandomGenerator>
 
+#include "globals.h"
 #include "person.h"
 #include "cmath"
 
@@ -50,14 +51,14 @@ void Person::updateDayCounters(int incubationPeriod, int sicknessPeriod)
 //    }
 }
 
-void Person::infect(int sicknessPeriod, double deathRate)
+void Person::getInfected(const InputPerameters& parameters, const RandomGenerator& generator)
 {
-    double deathProbability = QRandomGenerator::global()->generateDouble() * 100;
+//    double deathProbability = QRandomGenerator::global()->generateDouble() * 100;
 
     vitalityState = VitalityState::infected_incubation;
-    if (deathProbability < deathRate) {
-        dayOfDeath = static_cast<int>(QRandomGenerator::global()->generateDouble() * sicknessPeriod);
-    }
+//    if (deathProbability < deathRate) {
+//        dayOfDeath = static_cast<int>(QRandomGenerator::global()->generateDouble() * sicknessPeriod);
+//    }
 }
 
 void Person::updateVitalityState()
@@ -77,4 +78,9 @@ void Person::updateVitalityState()
         break;
     }
 
+}
+
+double Person::getProbabilityToInfect() const
+{
+    return probabilityToInfect;
 }

@@ -8,6 +8,7 @@
 class RandomGenerator
 {
 
+public:
     RandomGenerator();
     ~RandomGenerator();
     double generateNormal(double mean, double stddev);

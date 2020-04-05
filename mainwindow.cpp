@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
     infectionSeries(new QtCharts::QLineSeries),
     yAxis(new QtCharts::QValueAxis),
     xAxis(new QtCharts::QValueAxis),
-    populationMap(new PopulationMap(this, m_numberOfCellsPerRow)),
+    populationMap(new PopulationMap(this)),
     runner(new SimulationRunner)
 {
     /* TODOs:

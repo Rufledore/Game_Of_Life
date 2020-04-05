@@ -9,9 +9,8 @@
 #include <QPoint>
 #include <QPair>
 
-PopulationMap::PopulationMap(QWidget *parent, int numberOfCellsPerRow) :
+PopulationMap::PopulationMap(QWidget *parent) :
     QGraphicsScene(parent),
-    cellsPerRow(numberOfCellsPerRow),
     cellWidth(6),
     cellSeparator(cellWidth < 10 ? 1 : cellWidth/10),
     fieldWidth((cellsPerRow + 2) * cellWidth + (cellsPerRow - 1) * cellSeparator),  //WIdth = (Num of cells * width of cell) + (Num of cells - 1) * separator) + 2 cells for the frame;
@@ -77,7 +76,7 @@ void PopulationMap::drawInitialGeneration()
     }
 }
 
-void PopulationMap::drawNextGeneration(InfectionMap *infectedPopulation)
+void PopulationMap::drawNextGeneration(const InfectionMap *infectedPopulation)
 {
     InfectionMap::const_iterator infectedPerson;
     for (infectedPerson = infectedPopulation->constBegin();
@@ -170,7 +169,7 @@ void PopulationMap::changeClickedCell(CellCoordinates cell)
     graphicItem->setPixmap(*gamePixmap);
 }
 
-void PopulationMap::updatePopulationStatus(InfectionMap *map)
+void PopulationMap::updatePopulationStatus(const InfectionMap *map)
 {
     drawNextGeneration(map);
 }
