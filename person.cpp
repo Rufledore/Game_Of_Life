@@ -1,8 +1,7 @@
-#include <QRandomGenerator>
-
 #include "globals.h"
 #include "person.h"
 #include "cmath"
+#include "randomgenerator.h"
 
 Person::Person()
 {
@@ -51,14 +50,32 @@ void Person::updateDayCounters(int incubationPeriod, int sicknessPeriod)
 //    }
 }
 
-void Person::getInfected(const InputPerameters& parameters, const RandomGenerator& generator)
+void Person::getInfected(const InputPerameters& parameters)
 {
-//    double deathProbability = QRandomGenerator::global()->generateDouble() * 100;
+//  This methods calculates all the necessary variable that a person needs when he is infected.
+
+//  Calculate incubation period.
+    incubationPeriod = static_cast<int>(
+                       Singleton::randomGenerator()
+                       .generateNormal(parameters.incubationPeriodMean, parameters.incubationPeriodSigma));
+
+//  Calculate period with symptoms.
+    double severityOfTheInfection = Singleton::randomGenerator().generateUniform(0, 100);
+    if (severityOfTheInfection <= parameters.sereveCasesPercent) {
+        // Case is severe
+        symptomsPeriod = Singleton::randomGenerator()
+                         .generateUniform(parameters.severeSymptomsPeriodMean, parameters.severeSymptomsPeriodSigma);
+    }
+
+//  Calculate death rate uniformly between min and max.
+    double deathRate = Singleton::randomGenerator().generateUniform(parameters.deathRateMin, parameters.deathRateMax);
+    double deathProbability = Singleton::randomGenerator().generateUniform(0,100);
+    if (deathProbability < deathRate) {
+        dayOfDeath = static_cast<int>(QRandomGenerator::global()->generateDouble() * sicknessPeriod);
+    }
+
 
     vitalityState = VitalityState::infected_incubation;
-//    if (deathProbability < deathRate) {
-//        dayOfDeath = static_cast<int>(QRandomGenerator::global()->generateDouble() * sicknessPeriod);
-//    }
 }
 
 void Person::updateVitalityState()

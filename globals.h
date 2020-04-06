@@ -11,14 +11,17 @@ struct InputPerameters
 {
 
     // Input parameters
-    double incubationPeriodMin = 0;
-    double incubationPeriodMax = 0;
-    double illnessPeriodMin = 0;
-    double illnessPeriodMax = 0;
+    double incubationPeriodMean = 0;
+    double incubationPeriodSigma = 0;
+    double mildSymptomsPeriodMean = 0;
+    double mildSymptomsPeriodSigma = 0;
+    double severeSymptomsPeriodMean = 0;
+    double severeSymptomsPeriodSigma = 0;
     double infectionRateMin = 0;
     double infectionRateMax = 0;
     double deathRateMin = 0;
     double deathRateMax = 0;
+    double sereveCasesPercent = 0;
 };
 
 struct OutputParameters

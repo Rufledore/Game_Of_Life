@@ -9,21 +9,21 @@ class Person
 public:
     Person();
     void updateDayCounters(int incubationPeriod, int illnessPeriod);
-    void getInfected(const InputPerameters& parameters, const RandomGenerator& generator);
+    void getInfected(const InputPerameters& parameters);
     void updateVitalityState();
 
-
-    int incubationDaysCounter = 0;
-    int sicknessDaysCounter = 0;
     VitalityState vitalityState = VitalityState::healty;
-
 
     double getProbabilityToInfect() const;
 
 private:
-    int dayOfDeath = 0;
+    int dayOfDeath = 0;     // Day of the illness period
+    int incubationPeriod = 0;
+    int symptomsPeriod = 0;
     double probabilityToInfect = 0;
 
+    int incubationDaysCounter = 0;
+    int sicknessDaysCounter = 0;
 };
 
 typedef QPair<int, int> CellCoordinates; // QHash doesn't work with QPoint

@@ -16,9 +16,43 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout_4" columnstretch="1,2">
     <item row="0" column="0">
-     <layout class="QVBoxLayout" name="verticalLayout" stretch="2,1,0,0,0,1,1,3">
+     <layout class="QVBoxLayout" name="verticalLayout" stretch="0,1,0,0,0,1,1,3">
       <item>
-       <layout class="QGridLayout" name="gridLayout_3" rowstretch="1,1,1,1,1,1,1" columnstretch="0,0,1,1">
+       <layout class="QGridLayout" name="gridLayout_3" rowstretch="0,0,0,0,0,0,0,0,0,0" columnstretch="0,0,0,0" rowminimumheight="0,0,0,0,0,0,0,0,0,0">
+        <item row="3" column="0">
+         <widget class="QLabel" name="label_illnessPeriod">
+          <property name="text">
+           <string>Mild Illness Period [days]</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="3" rowspan="2">
+         <widget class="QLineEdit" name="lineEdit_incubationPeriodSigma"/>
+        </item>
+        <item row="6" column="1" colspan="2">
+         <widget class="QLabel" name="label_4">
+          <property name="text">
+           <string>Minimum</string>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="0" rowspan="2">
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string>Transmission Rate [people infected by one]</string>
+          </property>
+         </widget>
+        </item>
+        <item row="9" column="1" colspan="2">
+         <widget class="QLineEdit" name="lineEdit_deathRateMin"/>
+        </item>
+        <item row="0" column="3">
+         <widget class="QLabel" name="label_10">
+          <property name="text">
+           <string>Sigma</string>
+          </property>
+         </widget>
+        </item>
         <item row="0" column="0">
          <widget class="QLabel" name="label_6">
           <property name="text">
@@ -26,57 +60,38 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="3">
-         <widget class="QLabel" name="label_5">
-          <property name="text">
-           <string>Maximum</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1" rowspan="2" colspan="2">
-         <widget class="QLineEdit" name="lineEdit_incubationPeriodMin"/>
-        </item>
-        <item row="1" column="3" rowspan="2">
-         <widget class="QLineEdit" name="lineEdit_incubationPeriodMax"/>
-        </item>
-        <item row="3" column="1" colspan="2">
-         <widget class="QLineEdit" name="lineEdit_illnessPeriodMin"/>
-        </item>
-        <item row="3" column="3">
-         <widget class="QLineEdit" name="lineEdit_illnessPeriodMax"/>
-        </item>
-        <item row="6" column="0">
+        <item row="9" column="0">
          <widget class="QLabel" name="label_3">
           <property name="text">
-           <string>Death rate [%]</string>
+           <string>Mortality Rate [%]</string>
           </property>
          </widget>
         </item>
-        <item row="6" column="1" colspan="2">
-         <widget class="QLineEdit" name="lineEdit_deathRateMin"/>
+        <item row="3" column="3">
+         <widget class="QLineEdit" name="lineEdit_MildIllnessPeriodSigma"/>
         </item>
-        <item row="6" column="3">
-         <widget class="QLineEdit" name="lineEdit_deathRateMax"/>
-        </item>
-        <item row="4" column="0" rowspan="2">
-         <widget class="QLabel" name="label_2">
-          <property name="text">
-           <string>Infection rate [people infected by one]</string>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="1" rowspan="2" colspan="2">
-         <widget class="QLineEdit" name="lineEdit_infectionRateMin"/>
-        </item>
-        <item row="4" column="3" rowspan="2">
+        <item row="7" column="3" rowspan="2">
          <widget class="QLineEdit" name="lineEdit_infectionRateMax"/>
         </item>
-        <item row="3" column="0">
-         <widget class="QLabel" name="label_illnessPeriod">
+        <item row="0" column="1" colspan="2">
+         <widget class="QLabel" name="label_7">
           <property name="text">
-           <string>Illness Period [days]</string>
+           <string>Mean</string>
           </property>
          </widget>
+        </item>
+        <item row="5" column="0">
+         <widget class="QLabel" name="label_11">
+          <property name="text">
+           <string>Severe Cases</string>
+          </property>
+         </widget>
+        </item>
+        <item row="9" column="3">
+         <widget class="QLineEdit" name="lineEdit_deathRateMax"/>
+        </item>
+        <item row="1" column="1" rowspan="2" colspan="2">
+         <widget class="QLineEdit" name="lineEdit_incubationPeriodMean"/>
         </item>
         <item row="1" column="0" rowspan="2">
          <widget class="QLabel" name="label_incubationPeriod">
@@ -85,12 +100,34 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="1" colspan="2">
-         <widget class="QLabel" name="label_4">
+        <item row="5" column="1" colspan="2">
+         <widget class="QLineEdit" name="lineEdit_severeCases"/>
+        </item>
+        <item row="3" column="1" colspan="2">
+         <widget class="QLineEdit" name="lineEdit_MildIllnessPeriodMean"/>
+        </item>
+        <item row="7" column="1" rowspan="2" colspan="2">
+         <widget class="QLineEdit" name="lineEdit_infectionRateMin"/>
+        </item>
+        <item row="6" column="3">
+         <widget class="QLabel" name="label_5">
           <property name="text">
-           <string>Minimum</string>
+           <string>Maximum</string>
           </property>
          </widget>
+        </item>
+        <item row="4" column="0">
+         <widget class="QLabel" name="label_illnessPeriod_2">
+          <property name="text">
+           <string>Severe Illness Period [days]</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="3">
+         <widget class="QLineEdit" name="lineEdit_severeIllnessPeriodSigma"/>
+        </item>
+        <item row="4" column="1" colspan="2">
+         <widget class="QLineEdit" name="lineEdit_severeIllnessPeriodMean"/>
         </item>
        </layout>
       </item>
