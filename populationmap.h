@@ -53,11 +53,12 @@ private:
     QSharedPointer<QPixmap> gamePixmap;                                                //A surface where the game is painted
     QScopedPointer<QPainter> gamePainter;                                              //A tool for paint and repaint the game map
     QScopedPointer<QGraphicsPixmapItem> graphicItem;
-    QBrush whiteBrush = QBrush(QColor(255, 255, 255));
-    QBrush blackBrush = QBrush(QColor(0, 0, 0));
-    QBrush redBrush = QBrush(QColor(255, 0, 0));
-    QBrush yellowBrush = QBrush(QColor(255, 128, 0));
     QPoint clickedPoint;
+    QBrush healthyColorBrush = QBrush(QColor(200, 200, 200));
+    QBrush deadColorBrush = QBrush(QColor(0, 0, 0));
+    QBrush severeColorBrush = QBrush(QColor(255, 0, 0));
+    QBrush mildColorBrush = QBrush(QColor(250, 174, 21));
+    QBrush incubationColorBrush = QBrush(QColor(243, 250, 21));
 };
 
 

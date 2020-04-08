@@ -12,7 +12,7 @@ public:
     void getInfected(const InputPerameters& parameters);
     void updateVitalityState();
 
-    VitalityState vitalityState = VitalityState::healty;
+    VitalityState vitalityState = VitalityState::healthy;
 
     double getProbabilityToInfect() const;
 
@@ -21,6 +21,7 @@ private:
     int incubationPeriod = 0;
     int symptomsPeriod = 0;
     double probabilityToInfect = 0;
+    bool isSevere = false;
 
     int incubationDaysCounter = 0;
     int sicknessDaysCounter = 0;

@@ -57,20 +57,23 @@ void PopulationMap::drawInitialGeneration()
     for (int row = 0; row < cellsPerRow; ++row) {
         for (int col = 0; col < cellsPerRow; ++col) {
             switch (backgroundMap->value(CellCoordinates(col, row))) {
-            case VitalityState::healty:
-                drawNthCell(CellCoordinates(col, row), whiteBrush);
+            case VitalityState::healthy:
+                drawNthCell(CellCoordinates(col, row), healthyColorBrush);
                 break;
             case VitalityState::infected_incubation:
-                drawNthCell(CellCoordinates(col, row), yellowBrush);
+                drawNthCell(CellCoordinates(col, row), incubationColorBrush);
                 break;
-            case VitalityState::infected_sick:
-                drawNthCell(CellCoordinates(col, row), redBrush);
+            case VitalityState::infected_mild_symptoms:
+                drawNthCell(CellCoordinates(col, row), mildColorBrush);
+                break;
+            case VitalityState::infected_severe_symptoms:
+                drawNthCell(CellCoordinates(col, row), severeColorBrush);
                 break;
             case VitalityState::dead:
-                drawNthCell(CellCoordinates(col, row), blackBrush);
+                drawNthCell(CellCoordinates(col, row), deadColorBrush);
                 break;
             default:
-                drawNthCell(CellCoordinates(col, row), whiteBrush);
+                drawNthCell(CellCoordinates(col, row), healthyColorBrush);
             }
         }
     }
@@ -88,25 +91,29 @@ void PopulationMap::drawNextGeneration(const InfectionMap *infectedPopulation)
 
         if (person.vitalityState != backgroundMap->value(personPosition)) {      //If this person is the with same state in
             switch (person.vitalityState) {
-            case VitalityState::healty:
-                drawNthCell(personPosition, whiteBrush);
-                backgroundMap->insert(personPosition, VitalityState::healty);
+            case VitalityState::healthy:
+                drawNthCell(personPosition, healthyColorBrush);
+                backgroundMap->insert(personPosition, VitalityState::healthy);
                 break;
             case VitalityState::infected_incubation:
-                drawNthCell(personPosition, yellowBrush);
+                drawNthCell(personPosition, incubationColorBrush);
                 backgroundMap->insert(personPosition, VitalityState::infected_incubation);
                 break;
-            case VitalityState::infected_sick:
-                drawNthCell(personPosition, redBrush);
-                backgroundMap->insert(personPosition, VitalityState::infected_sick);
+            case VitalityState::infected_mild_symptoms:
+                drawNthCell(personPosition, mildColorBrush);
+                backgroundMap->insert(personPosition, VitalityState::infected_mild_symptoms);
+                break;
+            case VitalityState::infected_severe_symptoms:
+                drawNthCell(personPosition, severeColorBrush);
+                backgroundMap->insert(personPosition, VitalityState::infected_severe_symptoms);
                 break;
             case VitalityState::dead:
-                drawNthCell(personPosition, blackBrush);
+                drawNthCell(personPosition, deadColorBrush);
                 backgroundMap->insert(personPosition, VitalityState::dead);
                 break;
             default:
-                drawNthCell(personPosition, whiteBrush);
-                backgroundMap->insert(personPosition, VitalityState::healty);
+                drawNthCell(personPosition, healthyColorBrush);
+                backgroundMap->insert(personPosition, VitalityState::healthy);
             }
         }
     }
@@ -136,24 +143,28 @@ void PopulationMap::changeClickedCell(CellCoordinates cell)
     VitalityState personState = backgroundMap->value(cell);
 
     switch (personState) {
-    case VitalityState::healty:
+    case VitalityState::healthy:
         (*backgroundMap)[cell] = VitalityState::infected_incubation;
-        drawNthCell(cell, yellowBrush);
+        drawNthCell(cell, incubationColorBrush);
         break;
     case VitalityState::infected_incubation:
-        (*backgroundMap)[cell] = VitalityState::infected_sick;
-        drawNthCell(cell, redBrush);
+        (*backgroundMap)[cell] = VitalityState::infected_mild_symptoms;
+        drawNthCell(cell, mildColorBrush);
         break;
-    case VitalityState::infected_sick:
+    case VitalityState::infected_mild_symptoms:
+        (*backgroundMap)[cell] = VitalityState::infected_severe_symptoms;
+        drawNthCell(cell, severeColorBrush);
+        break;
+    case VitalityState::infected_severe_symptoms:
         (*backgroundMap)[cell] = VitalityState::dead;
-        drawNthCell(cell, blackBrush);
+        drawNthCell(cell, deadColorBrush);
         break;
     case VitalityState::dead:
-        (*backgroundMap)[cell] = VitalityState::healty;
-        drawNthCell(cell, whiteBrush);
+        (*backgroundMap)[cell] = VitalityState::healthy;
+        drawNthCell(cell, healthyColorBrush);
         break;
     default:
-        drawNthCell(cell, whiteBrush);
+        drawNthCell(cell, healthyColorBrush);
     }
 
 /*

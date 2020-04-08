@@ -29,12 +29,15 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->graphicsView_map->setScene(populationMap.data());
 
-    connect(ui->lineEdit_incubationPeriodMin, &QLineEdit::textChanged, this, &MainWindow::updateInputParameters);
-    connect(ui->lineEdit_incubationPeriodMax, &QLineEdit::textChanged, this, &MainWindow::updateInputParameters);
-    connect(ui->lineEdit_illnessPeriodMin,    &QLineEdit::textChanged, this, &MainWindow::updateInputParameters);
-    connect(ui->lineEdit_illnessPeriodMax,    &QLineEdit::textChanged, this, &MainWindow::updateInputParameters);
-    connect(ui->lineEdit_infectionRateMin,    &QLineEdit::textChanged, this, &MainWindow::updateInputParameters);
-    connect(ui->lineEdit_infectionRateMax,    &QLineEdit::textChanged, this, &MainWindow::updateInputParameters);
+    connect(ui->lineEdit_incubationPeriodMean, &QLineEdit::textChanged, this, &MainWindow::updateInputParameters);
+    connect(ui->lineEdit_incubationPeriodSigma, &QLineEdit::textChanged, this, &MainWindow::updateInputParameters);
+    connect(ui->lineEdit_severeIllnessPeriodMean,    &QLineEdit::textChanged, this, &MainWindow::updateInputParameters);
+    connect(ui->lineEdit_severeIllnessPeriodSigma,    &QLineEdit::textChanged, this, &MainWindow::updateInputParameters);
+    connect(ui->lineEdit_MildIllnessPeriodMean,    &QLineEdit::textChanged, this, &MainWindow::updateInputParameters);
+    connect(ui->lineEdit_MildIllnessPeriodSigma,    &QLineEdit::textChanged, this, &MainWindow::updateInputParameters);
+    connect(ui->lineEdit_percentSevereCases,    &QLineEdit::textChanged, this, &MainWindow::updateInputParameters);
+    connect(ui->lineEdit_transmissionRateMin,    &QLineEdit::textChanged, this, &MainWindow::updateInputParameters);
+    connect(ui->lineEdit_transmissionRateMax,    &QLineEdit::textChanged, this, &MainWindow::updateInputParameters);
     connect(ui->lineEdit_deathRateMin,        &QLineEdit::textChanged, this, &MainWindow::updateInputParameters);
     connect(ui->lineEdit_deathRateMax,        &QLineEdit::textChanged, this, &MainWindow::updateInputParameters);
 
@@ -100,15 +103,19 @@ void MainWindow::setUpChart()
 
 void MainWindow::updateInputParameters()
 {
+
     InputPerameters inputParameters;
-    inputParameters.incubationPeriodMin = ui->lineEdit_incubationPeriodMin->text().toDouble();
-    inputParameters.incubationPeriodMax = ui->lineEdit_incubationPeriodMax->text().toDouble();
-    inputParameters.illnessPeriodMin = ui->lineEdit_illnessPeriodMin->text().toDouble();
-    inputParameters.illnessPeriodMax = ui->lineEdit_illnessPeriodMax->text().toDouble();
-    inputParameters.infectionRateMin = ui->lineEdit_infectionRateMin->text().toDouble();
-    inputParameters.infectionRateMax = ui->lineEdit_infectionRateMax->text().toDouble();
+    inputParameters.incubationPeriodMean = ui->lineEdit_incubationPeriodMean->text().toDouble();
+    inputParameters.incubationPeriodSigma = ui->lineEdit_incubationPeriodSigma->text().toDouble();
+    inputParameters.mildSymptomsPeriodMean = ui->lineEdit_MildIllnessPeriodMean->text().toDouble();
+    inputParameters.mildSymptomsPeriodSigma = ui->lineEdit_MildIllnessPeriodSigma->text().toDouble();
+    inputParameters.severeSymptomsPeriodMean = ui->lineEdit_severeIllnessPeriodMean->text().toDouble();
+    inputParameters.severeSymptomsPeriodSigma = ui->lineEdit_severeIllnessPeriodSigma->text().toDouble();
+    inputParameters.transmitionRateMin = ui->lineEdit_transmissionRateMin->text().toDouble();
+    inputParameters.transmisionRateMax = ui->lineEdit_transmissionRateMax->text().toDouble();
     inputParameters.deathRateMin = ui->lineEdit_deathRateMin->text().toDouble();
     inputParameters.deathRateMax = ui->lineEdit_deathRateMax->text().toDouble();
+    inputParameters.persentSevereCases = ui->lineEdit_percentSevereCases->text().toDouble();
 
     runner->UpdateInputParameters(&inputParameters);
 
@@ -121,4 +128,6 @@ void MainWindow::updateOutputParametersOnGUI(const OutputParameters *outputParam
     ui->label_indicator_numberOfInfections->setNum(outputParameters->numberOfInfections);
     ui->label_indicator_numberOfDeaths->setNum(outputParameters->numberOfDeaths);
     ui->label_indicator_numberOfDays->setNum(outputParameters->numberOfDays);
+    ui->label_indicator_numberOfMildCases->setNum(outputParameters->numberOfMildSymptoms);
+    ui->label_indicator_numberOfSevereCases->setNum(outputParameters->numberOfSevereSymptoms);
 }

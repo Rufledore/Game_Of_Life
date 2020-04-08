@@ -5,7 +5,7 @@
 #include <QPair>
 
 
-enum VitalityState {healty = 0, infected_incubation, infected_sick, dead};
+enum VitalityState {healthy = 0, infected_incubation, infected_mild_symptoms, infected_severe_symptoms, dead};
 
 struct InputPerameters
 {
@@ -17,11 +17,11 @@ struct InputPerameters
     double mildSymptomsPeriodSigma = 0;
     double severeSymptomsPeriodMean = 0;
     double severeSymptomsPeriodSigma = 0;
-    double infectionRateMin = 0;
-    double infectionRateMax = 0;
+    double transmitionRateMin = 0;
+    double transmisionRateMax = 0;
     double deathRateMin = 0;
     double deathRateMax = 0;
-    double sereveCasesPercent = 0;
+    double persentSevereCases = 0;
 };
 
 struct OutputParameters
@@ -29,8 +29,10 @@ struct OutputParameters
 
     // Output parameters
     int numberOfInfections = 0;
-    int numberOfDays = 0;
+    int numberOfMildSymptoms = 0;
+    int numberOfSevereSymptoms = 0;
     int numberOfDeaths = 0;
+    int numberOfDays = 0;
 };
 
 
