@@ -8,7 +8,7 @@ class Person
 {
 public:
     Person();
-    void updateDayCounters(int incubationPeriod, int illnessPeriod);
+    void updateDayCounters();
     void getInfected(const InputPerameters& parameters);
     void updateVitalityState();
 

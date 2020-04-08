@@ -8,7 +8,7 @@ Person::Person()
 
 }
 
-void Person::updateDayCounters(int incubationPeriod, int sicknessPeriod)
+void Person::updateDayCounters()
 {
     switch (vitalityState) {
     case VitalityState::healthy:
@@ -16,12 +16,15 @@ void Person::updateDayCounters(int incubationPeriod, int sicknessPeriod)
     case VitalityState::infected_incubation:
         ++incubationDaysCounter;
         if (incubationDaysCounter == incubationPeriod) {
-            vitalityState = VitalityState::infected_mild_symptoms;
+            if (isSevere)
+                vitalityState = VitalityState::infected_severe_symptoms;
+            else
+                vitalityState = VitalityState::infected_mild_symptoms;
         }
         break;
     case VitalityState::infected_mild_symptoms:
         ++sicknessDaysCounter;
-        if (sicknessDaysCounter > sicknessPeriod) {
+        if (sicknessDaysCounter > symptomsPeriod) {
             vitalityState = VitalityState::healthy;
         }
         break;
@@ -30,7 +33,7 @@ void Person::updateDayCounters(int incubationPeriod, int sicknessPeriod)
         if (dayOfDeath == sicknessDaysCounter) {
             vitalityState = VitalityState::dead;
         }
-        if (sicknessDaysCounter > sicknessPeriod) {
+        if (sicknessDaysCounter > symptomsPeriod) {
             vitalityState = VitalityState::healthy;
         }
         break;
