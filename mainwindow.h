@@ -10,7 +10,7 @@
 #include "game.h"
 #include "populationmap.h"
 #include "person.h"
-#include "simulationrunner.h"
+#include "simulationcore.h"
 #include "globals.h"
 
 namespace Ui {
@@ -38,7 +38,7 @@ private:
     QSharedPointer<PopulationMap> populationMap;
 
     // The background object that runs the simulation.
-    QSharedPointer<SimulationRunner> runner;
+    QSharedPointer<SimulationCore> runner;
 
     // Methods ---------------------------------------------------------------------------------------------------------
     void setUpChart();

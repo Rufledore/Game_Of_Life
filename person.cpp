@@ -81,13 +81,13 @@ void Person::getInfected(const InputPerameters& parameters)
     if (severityOfTheInfection <= parameters.persentSevereCases) {
         // Case is severe
         symptomsPeriod = static_cast<int>(Singleton::randomGenerator()
-                         .generateUniform(parameters.severeSymptomsPeriodMean, parameters.severeSymptomsPeriodSigma));
+                         .generateNormal(parameters.severeSymptomsPeriodMean, parameters.severeSymptomsPeriodSigma));
         isSevere = true;
 
     } else {
         // Case is mild
         symptomsPeriod = static_cast<int>(Singleton::randomGenerator()
-                         .generateUniform(parameters.mildSymptomsPeriodMean, parameters.mildSymptomsPeriodSigma));
+                         .generateNormal(parameters.mildSymptomsPeriodMean, parameters.mildSymptomsPeriodSigma));
         isSevere = false;
     }
 

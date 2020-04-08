@@ -14,7 +14,7 @@ MainWindow::MainWindow(QWidget *parent) :
     yAxis(new QtCharts::QValueAxis),
     xAxis(new QtCharts::QValueAxis),
     populationMap(new PopulationMap(this)),
-    runner(new SimulationRunner)
+    runner(new SimulationCore)
 {
     /* TODOs:
      * 2. Separate the infection possibility between close neighbors and random cells from the map.
@@ -41,12 +41,39 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->lineEdit_deathRateMin,        &QLineEdit::textChanged, this, &MainWindow::updateInputParameters);
     connect(ui->lineEdit_deathRateMax,        &QLineEdit::textChanged, this, &MainWindow::updateInputParameters);
 
-    connect(populationMap.data(), &PopulationMap::clicked, runner.data(), &SimulationRunner::changeClickedPersonState);
-    connect(runner.data(), &SimulationRunner::populationStatusUpdated, populationMap.data(), &PopulationMap::updatePopulationStatus);
-    connect(runner.data(), &SimulationRunner::updatedOutputParameters, this, &MainWindow::updateOutputParametersOnGUI);
-
+    connect(populationMap.data(), &PopulationMap::clicked, runner.data(), &SimulationCore::changeClickedPersonState);
+    connect(runner.data(), &SimulationCore::populationStatusUpdated, populationMap.data(), &PopulationMap::updatePopulationStatus);
+    connect(runner.data(), &SimulationCore::updatedOutputParameters, this, &MainWindow::updateOutputParametersOnGUI);
+    connect(ui->pushButton_Start, &QPushButton::clicked, runner.data(), &SimulationCore::update);
 
     runner->updateMap();
+
+    // Set default values
+    ui->lineEdit_deathRateMin->setText("3.3");
+    ui->lineEdit_deathRateMax->setText("3.4");
+    ui->lineEdit_percentSevereCases->setText("19.1");
+    ui->lineEdit_transmissionRateMin->setText("1.5");
+    ui->lineEdit_transmissionRateMax->setText("3.5");
+    ui->lineEdit_incubationPeriodMean->setText("5.2");
+    ui->lineEdit_incubationPeriodSigma->setText("1.45");
+    ui->lineEdit_MildIllnessPeriodMean->setText("14");
+    ui->lineEdit_MildIllnessPeriodSigma->setText("5");
+    ui->lineEdit_severeIllnessPeriodMean->setText("32");
+    ui->lineEdit_severeIllnessPeriodSigma->setText("7");
+/*
+    ui->lineEdit_deathRateMin->textChanged();
+    ui->lineEdit_deathRateMax;
+    ui->lineEdit_percentSevereCases;
+    ui->lineEdit_transmissionRateMin;
+    ui->lineEdit_transmissionRateMax;
+    ui->lineEdit_incubationPeriodMean;
+    ui->lineEdit_incubationPeriodSigma;
+    ui->lineEdit_MildIllnessPeriodMean;
+    ui->lineEdit_MildIllnessPeriodSigma;
+    ui->lineEdit_severeIllnessPeriodMean;
+    ui->lineEdit_severeIllnessPeriodSigma;
+
+*/
 }
 
 MainWindow::~MainWindow()

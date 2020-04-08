@@ -31,6 +31,7 @@ SOURCES += \
     person.cpp \
     populationmap.cpp \
     randomgenerator.cpp \
+    simulationcore.cpp \
     simulationrunner.cpp
 
 HEADERS += \
@@ -39,6 +40,7 @@ HEADERS += \
     person.h \
     populationmap.h \
     randomgenerator.h \
+    simulationcore.h \
     simulationrunner.h
 
 FORMS += \
