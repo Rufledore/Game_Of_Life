@@ -27,6 +27,7 @@ private:
     double probabilityToInfect = 0;
     bool isSevere = false;
     bool stateChanged = false;
+    bool willDie = false;
 
     int incubationDaysCounter = 0;
     int sicknessDaysCounter = 0;

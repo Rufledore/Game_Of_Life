@@ -22,6 +22,11 @@ void SimulationCore::updateInfectionsForTheDay()
     while (infectorKey != keysOfInfectors.end()) {
 
         Person infector = infectedPopulationMap->value(*infectorKey);
+        if (infector.vitalityState == VitalityState::healthy || infector.vitalityState == VitalityState::dead) {
+            infectorKey = keysOfInfectors.erase(infectorKey);
+            continue;
+        }
+
         QList<CellCoordinates> infectedPeopleCoordinates = findPeopleInfectedBy(&infector);
         for (infectedPersonCoordinates = infectedPeopleCoordinates.begin();
              infectedPersonCoordinates != infectedPeopleCoordinates.end();

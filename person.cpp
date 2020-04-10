@@ -16,7 +16,7 @@ void Person::updateDayCounters()
         break;
     case VitalityState::infected_incubation:
         ++incubationDaysCounter;
-        if (incubationDaysCounter == incubationPeriod) {
+        if (incubationDaysCounter >= incubationPeriod) {
             if (isSevere) {
                 updateVitalityStateTo(infected_severe_symptoms);
             }
@@ -33,7 +33,7 @@ void Person::updateDayCounters()
         break;
     case VitalityState::infected_severe_symptoms:
         ++sicknessDaysCounter;
-        if (dayOfDeath == sicknessDaysCounter) {
+        if (sicknessDaysCounter >= dayOfDeath && willDie) {
             updateVitalityStateTo(dead);
         }
         if (sicknessDaysCounter > symptomsPeriod) {
@@ -95,10 +95,15 @@ void Person::calculateInfectionParameters(const InputPerameters& parameters)
     }
 
 //  Calculate death rate uniformly between min and max.
-    double deathRate = Singleton::randomGenerator().generateUniform(parameters.deathRateMin, parameters.deathRateMax);
-    double deathProbability = Singleton::randomGenerator().generateUniform(0,100);
-    if (deathProbability < deathRate) {
-        dayOfDeath = static_cast<int>(Singleton::randomGenerator().generateUniform(0, symptomsPeriod));
+    if (isSevere) {
+        double deathRate = Singleton::randomGenerator().generateUniform(parameters.deathRateMin, parameters.deathRateMax);
+        deathRate = (deathRate/parameters.persentSevereCases) * 100;
+        double deathProbability = Singleton::randomGenerator().generateUniform(0,100);
+        if (deathProbability < deathRate) {
+            dayOfDeath = static_cast<int>(Singleton::randomGenerator().generateUniform(0, symptomsPeriod));
+            willDie = true;
+        }
+
     }
 
 //  Calculate probability to infect someone in a day.
