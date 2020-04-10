@@ -9,12 +9,16 @@ class Person
 public:
     Person();
     void updateDayCounters();
-    void getInfected(const InputPerameters& parameters);
+    void calculateInfectionParameters(const InputPerameters& parameters);
     void updateVitalityState();
+    void updateVitalityStateTo(const VitalityState& newState);
 
-    VitalityState vitalityState = VitalityState::healthy;
+    VitalityState previousVitalityState = VitalityState::healthy;
+    VitalityState vitalityState         = VitalityState::healthy;
 
     double getProbabilityToInfect() const;
+
+    bool stateIsChanged() const;
 
 private:
     int dayOfDeath = 0;     // Day of the illness period
@@ -22,6 +26,7 @@ private:
     int symptomsPeriod = 0;
     double probabilityToInfect = 0;
     bool isSevere = false;
+    bool stateChanged = false;
 
     int incubationDaysCounter = 0;
     int sicknessDaysCounter = 0;

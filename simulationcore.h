@@ -23,6 +23,7 @@ public:
     QList<CellCoordinates> findPeopleInfectedBy(const Person* infector);
 
     void updateMap();
+    void calculateOutputParameters(CellCoordinates coordinates);
     void UpdateInputParameters(const InputPerameters* parameters);
 
     // Getters

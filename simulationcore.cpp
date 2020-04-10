@@ -28,22 +28,30 @@ void SimulationCore::updateInfectionsForTheDay()
              ++infectedPersonCoordinates) {
             if (!infectedPopulationMap->contains(*infectedPersonCoordinates)) {
                 Person infectedPerson;
-//                infectedPerson.getInfected()
+                infectedPerson.calculateInfectionParameters(inputParameters);
+                infectedPerson.updateVitalityState();
                 infectedPopulationMap->insert(*infectedPersonCoordinates, infectedPerson);
+                if (infectedPerson.stateIsChanged())
+                    calculateOutputParameters(*infectedPersonCoordinates);
             } else if (infectedPopulationMap->value(*infectedPersonCoordinates).vitalityState == VitalityState::healthy) {
                 //TODO: this case should be updated when the immunization starts to be considered during the simulation.
+                /*
                 Person infectedPerson;
-//                infectedPerson.getInfected()
+                infectedPerson.calculateInfectionParameters(inputParameters);
                 *infectedPopulationMap->insert(*infectedPersonCoordinates, infectedPerson);
+                */
             }
         }
 
         infector.updateDayCounters();
         infectedPopulationMap->insert(*infectorKey, infector);
+        if (infector.stateIsChanged())
+            calculateOutputParameters(*infectorKey);
 
         // This row deletes the value where the iterator is and returns an iterator to the next element.
         infectorKey = keysOfInfectors.erase(infectorKey);
     }
+
 
     ++outputParameters.numberOfDays;
     populationStatusUpdated(infectedPopulationMap.data());
@@ -63,10 +71,11 @@ QList<CellCoordinates> SimulationCore::findPeopleInfectedBy(const Person* infect
     probabilityToInfect /= maxInfectedPerDay;
 
     for (int i = 0; i < maxInfectedPerDay; ++i) {
-        if (randomGenerator.generateUniform(0, 1) < probabilityToInfect) {
-            infected.append(CellCoordinates(
-                                static_cast<int>(randomGenerator.generateUniform(0, peoplePerRow)),   // In this way there is a very little lower chance for the last of the row to appear.
-                                static_cast<int>(randomGenerator.generateUniform(0, peoplePerRow))));
+        double randomInfectionKoeficient = randomGenerator.generateUniform(0, 1);
+        if (randomInfectionKoeficient < probabilityToInfect) {
+            int x = static_cast<int>(randomGenerator.generateUniform(0, peoplePerRow));
+            int y = static_cast<int>(randomGenerator.generateUniform(0, peoplePerRow));
+            infected.append(CellCoordinates(x, y));  // In this way there is a very little lower chance for the last of the row to appear.
         }
     }
 
@@ -95,6 +104,52 @@ void SimulationCore::updateMap()
 
 }
 
+void SimulationCore::calculateOutputParameters(CellCoordinates coordinates)
+{
+    Person* clickedPerson = &(*infectedPopulationMap)[coordinates]; // If the key is not in the map it is automatically generated.
+
+    VitalityState previousState = clickedPerson->previousVitalityState;
+    VitalityState currentState = clickedPerson->vitalityState;
+
+    switch (currentState) {
+    case VitalityState::healthy:
+    {
+        if      (previousState == VitalityState::dead)
+            --outputParameters.numberOfDeaths;
+        else if (previousState == VitalityState::infected_severe_symptoms) {
+            --outputParameters.numberOfSevereSymptoms;
+            --outputParameters.numberOfInfections;
+        }
+        else if (previousState == VitalityState::infected_mild_symptoms) {
+            --outputParameters.numberOfMildSymptoms;
+            --outputParameters.numberOfInfections;
+        }
+    }
+        break;
+    case VitalityState::infected_incubation:
+        ++outputParameters.numberOfInfections;
+        break;
+    case VitalityState::infected_mild_symptoms:
+        ++outputParameters.numberOfMildSymptoms;
+        break;
+    case VitalityState::infected_severe_symptoms:
+    {
+        if (previousState == VitalityState::infected_mild_symptoms)
+            --outputParameters.numberOfMildSymptoms;
+        ++outputParameters.numberOfSevereSymptoms;
+    }
+        break;
+    case VitalityState::dead:
+    {
+        --outputParameters.numberOfSevereSymptoms;
+        --outputParameters.numberOfInfections;
+        ++outputParameters.numberOfDeaths;
+    }
+        break;
+    }
+
+}
+
 void SimulationCore::UpdateInputParameters(const InputPerameters* parameters)
 {
     inputParameters = *parameters;
@@ -113,7 +168,7 @@ void SimulationCore::changeClickedPersonState(CellCoordinates cell)
     switch (clickedPerson->vitalityState) {
     case VitalityState::healthy:
         ++outputParameters.numberOfInfections;
-        clickedPerson->getInfected(inputParameters);
+        clickedPerson->calculateInfectionParameters(inputParameters);
         break;
     case VitalityState::infected_incubation:
         ++outputParameters.numberOfMildSymptoms;
@@ -132,7 +187,7 @@ void SimulationCore::changeClickedPersonState(CellCoordinates cell)
         break;
     }
 
-    clickedPerson->updateVitalityState();
+    clickedPerson->updateVitalityState(); //??????
     updatedOutputParameters(&outputParameters);
 }
 

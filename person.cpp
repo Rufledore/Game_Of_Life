@@ -10,31 +10,34 @@ Person::Person()
 
 void Person::updateDayCounters()
 {
+    stateChanged = false;
     switch (vitalityState) {
     case VitalityState::healthy:
         break;
     case VitalityState::infected_incubation:
         ++incubationDaysCounter;
         if (incubationDaysCounter == incubationPeriod) {
-            if (isSevere)
-                vitalityState = VitalityState::infected_severe_symptoms;
-            else
-                vitalityState = VitalityState::infected_mild_symptoms;
+            if (isSevere) {
+                updateVitalityStateTo(infected_severe_symptoms);
+            }
+            else {
+                updateVitalityStateTo(infected_mild_symptoms);
+            }
         }
         break;
     case VitalityState::infected_mild_symptoms:
         ++sicknessDaysCounter;
         if (sicknessDaysCounter > symptomsPeriod) {
-            vitalityState = VitalityState::healthy;
+            updateVitalityStateTo(healthy);
         }
         break;
     case VitalityState::infected_severe_symptoms:
         ++sicknessDaysCounter;
         if (dayOfDeath == sicknessDaysCounter) {
-            vitalityState = VitalityState::dead;
+            updateVitalityStateTo(dead);
         }
         if (sicknessDaysCounter > symptomsPeriod) {
-            vitalityState = VitalityState::healthy;
+            updateVitalityStateTo(healthy);
         }
         break;
     case VitalityState::dead:
@@ -59,7 +62,7 @@ void Person::updateDayCounters()
 //    }
 }
 
-void Person::getInfected(const InputPerameters& parameters)
+void Person::calculateInfectionParameters(const InputPerameters& parameters)
 {
 //  This methods calculates all the necessary variable that a person needs when he is infected.
 
@@ -102,32 +105,49 @@ void Person::getInfected(const InputPerameters& parameters)
     double transmisionRate = Singleton::randomGenerator().generateUniform(parameters.transmitionRateMin, parameters.transmisionRateMax);
     probabilityToInfect = transmisionRate/(incubationPeriod + symptomsPeriod);
 
-    vitalityState = VitalityState::infected_incubation;
+//    vitalityState = VitalityState::infected_incubation;
 }
 
 void Person::updateVitalityState()
 {
+    stateChanged = false;
     switch (vitalityState) {
     case VitalityState::healthy:
-        vitalityState = VitalityState::infected_incubation;
+        updateVitalityStateTo(infected_incubation);
         break;
     case VitalityState::infected_incubation:
-        vitalityState = VitalityState::infected_mild_symptoms;
+        updateVitalityStateTo(infected_mild_symptoms);
         break;
     case VitalityState::infected_mild_symptoms:
-        vitalityState = VitalityState::infected_severe_symptoms;
+        updateVitalityStateTo(infected_severe_symptoms);
         break;
     case VitalityState::infected_severe_symptoms:
-        vitalityState = VitalityState::dead;
+        updateVitalityStateTo(dead);
         break;
     case VitalityState::dead:
-        vitalityState = VitalityState::healthy;
+        updateVitalityStateTo(healthy);
         break;
     }
 
 }
 
+void Person::updateVitalityStateTo(const VitalityState& newState)
+{
+    if (vitalityState != newState){
+        previousVitalityState = vitalityState;
+        vitalityState = newState;
+        stateChanged = true;
+    } else {
+        stateChanged = false;
+    }
+}
+
 double Person::getProbabilityToInfect() const
 {
     return probabilityToInfect;
+}
+
+bool Person::stateIsChanged() const
+{
+    return stateChanged;
 }
