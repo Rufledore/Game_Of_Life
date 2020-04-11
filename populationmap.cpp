@@ -164,6 +164,7 @@ void PopulationMap::changeClickedCell(CellCoordinates cell)
         drawNthCell(cell, healthyColorBrush);
         break;
     default:
+        (*backgroundMap)[cell] = VitalityState::healthy;
         drawNthCell(cell, healthyColorBrush);
     }
 
@@ -203,6 +204,13 @@ void PopulationMap::drawNthCell(CellCoordinates currentCell, QBrush brush)
 
     gamePainter->fillRect(rectToDraw, brush);
 
+}
+
+void PopulationMap::clean()
+{
+    backgroundMap->clear();
+    this->drawInitialGeneration();
+    graphicItem->setPixmap(*gamePixmap);
 }
 
 void PopulationMap::OBSOLATE_updateNextGeneration()

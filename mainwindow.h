@@ -38,7 +38,7 @@ private:
     QSharedPointer<PopulationMap> populationMap;
 
     // The background object that runs the simulation.
-    QSharedPointer<SimulationCore> runner;
+    QSharedPointer<SimulationCore> simulation;
 
     // Methods ---------------------------------------------------------------------------------------------------------
     void setUpChart();
@@ -46,6 +46,7 @@ private:
 private slots:
     void updateInputParameters();
     void updateOutputParametersOnGUI(const OutputParameters* outputParameters);
+    void reset();
 
 };
 

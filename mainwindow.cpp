@@ -1,4 +1,5 @@
 #include <QGridLayout>
+#include <QDoubleSpinBox>
 #include <QDebug>
 
 #include "mainwindow.h"
@@ -14,7 +15,7 @@ MainWindow::MainWindow(QWidget *parent) :
     yAxis(new QtCharts::QValueAxis),
     xAxis(new QtCharts::QValueAxis),
     populationMap(new PopulationMap(this)),
-    runner(new SimulationCore)
+    simulation(new SimulationCore)
 {
     /* TODOs:
      * 2. Separate the infection possibility between close neighbors and random cells from the map.
@@ -28,38 +29,40 @@ MainWindow::MainWindow(QWidget *parent) :
     setUpChart();
 
     ui->graphicsView_map->setScene(populationMap.data());
+    connect(ui->doubleSpinBox_deathRateMax, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::updateInputParameters);
+    connect(ui->doubleSpinBox_incubationPeriodMean, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::updateInputParameters);
+    connect(ui->doubleSpinBox_incubationPeriodSigma, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::updateInputParameters);
+    connect(ui->doubleSpinBox_severeIllnessPeriodMean, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::updateInputParameters);
+    connect(ui->doubleSpinBox_severeIllnessPeriodSigma, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::updateInputParameters);
+    connect(ui->doubleSpinBox_mildIllnessPeriodMean, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::updateInputParameters);
+    connect(ui->doubleSpinBox_mildIllnessPeriodSigma, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::updateInputParameters);
+    connect(ui->doubleSpinBox_percentSevereCases, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::updateInputParameters);
+    connect(ui->doubleSpinBox_transmissionRateMin, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::updateInputParameters);
+    connect(ui->doubleSpinBox_transmissionRateMax, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::updateInputParameters);
+    connect(ui->doubleSpinBox_deathRateMin, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::updateInputParameters);
+    connect(ui->doubleSpinBox_deathRateMax, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::updateInputParameters);
 
-    connect(ui->lineEdit_incubationPeriodMean, &QLineEdit::textChanged, this, &MainWindow::updateInputParameters);
-    connect(ui->lineEdit_incubationPeriodSigma, &QLineEdit::textChanged, this, &MainWindow::updateInputParameters);
-    connect(ui->lineEdit_severeIllnessPeriodMean,    &QLineEdit::textChanged, this, &MainWindow::updateInputParameters);
-    connect(ui->lineEdit_severeIllnessPeriodSigma,    &QLineEdit::textChanged, this, &MainWindow::updateInputParameters);
-    connect(ui->lineEdit_MildIllnessPeriodMean,    &QLineEdit::textChanged, this, &MainWindow::updateInputParameters);
-    connect(ui->lineEdit_MildIllnessPeriodSigma,    &QLineEdit::textChanged, this, &MainWindow::updateInputParameters);
-    connect(ui->lineEdit_percentSevereCases,    &QLineEdit::textChanged, this, &MainWindow::updateInputParameters);
-    connect(ui->lineEdit_transmissionRateMin,    &QLineEdit::textChanged, this, &MainWindow::updateInputParameters);
-    connect(ui->lineEdit_transmissionRateMax,    &QLineEdit::textChanged, this, &MainWindow::updateInputParameters);
-    connect(ui->lineEdit_deathRateMin,        &QLineEdit::textChanged, this, &MainWindow::updateInputParameters);
-    connect(ui->lineEdit_deathRateMax,        &QLineEdit::textChanged, this, &MainWindow::updateInputParameters);
+    connect(populationMap.data(), &PopulationMap::clicked, simulation.data(), &SimulationCore::changeClickedPersonState);
+    connect(simulation.data(), &SimulationCore::populationStatusUpdated, populationMap.data(), &PopulationMap::updatePopulationStatus);
+    connect(simulation.data(), &SimulationCore::updatedOutputParameters, this, &MainWindow::updateOutputParametersOnGUI);
 
-    connect(populationMap.data(), &PopulationMap::clicked, runner.data(), &SimulationCore::changeClickedPersonState);
-    connect(runner.data(), &SimulationCore::populationStatusUpdated, populationMap.data(), &PopulationMap::updatePopulationStatus);
-    connect(runner.data(), &SimulationCore::updatedOutputParameters, this, &MainWindow::updateOutputParametersOnGUI);
-    connect(ui->pushButton_Start, &QPushButton::clicked, runner.data(), &SimulationCore::update);
+    connect(ui->pushButton_calculateNextDay, &QPushButton::clicked, simulation.data(), &SimulationCore::update);
+    connect(ui->pushButton_reset, &QPushButton::clicked, this, &MainWindow::reset);
 
-    runner->updateMap();
+    simulation->updateMap();
 
     // Set default values
-    ui->lineEdit_deathRateMin->setText("3.3");
-    ui->lineEdit_deathRateMax->setText("3.4");
-    ui->lineEdit_percentSevereCases->setText("19.1");
-    ui->lineEdit_transmissionRateMin->setText("1.5");
-    ui->lineEdit_transmissionRateMax->setText("3.5");
-    ui->lineEdit_incubationPeriodMean->setText("5.2");
-    ui->lineEdit_incubationPeriodSigma->setText("1.45");
-    ui->lineEdit_MildIllnessPeriodMean->setText("14");
-    ui->lineEdit_MildIllnessPeriodSigma->setText("5");
-    ui->lineEdit_severeIllnessPeriodMean->setText("32");
-    ui->lineEdit_severeIllnessPeriodSigma->setText("7");
+    ui->doubleSpinBox_deathRateMin->setValue(3.3);
+    ui->doubleSpinBox_deathRateMax->setValue(3.4);
+    ui->doubleSpinBox_percentSevereCases->setValue(19.1);
+    ui->doubleSpinBox_transmissionRateMin->setValue(1.5);
+    ui->doubleSpinBox_transmissionRateMax->setValue(3.5);
+    ui->doubleSpinBox_incubationPeriodMean->setValue(5.2);
+    ui->doubleSpinBox_incubationPeriodSigma->setValue(1.45);
+    ui->doubleSpinBox_mildIllnessPeriodMean->setValue(14);
+    ui->doubleSpinBox_mildIllnessPeriodSigma->setValue(5);
+    ui->doubleSpinBox_severeIllnessPeriodMean->setValue(32);
+    ui->doubleSpinBox_severeIllnessPeriodSigma->setValue(7);
 /*
     ui->lineEdit_deathRateMin->textChanged();
     ui->lineEdit_deathRateMax;
@@ -89,7 +92,7 @@ void MainWindow::setUpChart()
 //    infectionSeries->append(4, 5);
 //    m_numberOfDays = 4;
 //    m_numberOfInfected = 5;
-    OutputParameters parameters = runner->getOutputParameters();
+    OutputParameters parameters = simulation->getOutputParameters();
 
     m_chart->legend()->hide();
     m_chart->addSeries(infectionSeries.get());
@@ -122,29 +125,30 @@ void MainWindow::setUpChart()
 //    infectionSeries->attachAxis(m_chart->axes().last());
     infectionSeries->attachAxis(xAxis.data());
     infectionSeries->attachAxis(yAxis.data());
-    ui->widget_chart->setRenderHint(QPainter::Antialiasing);
-    ui->widget_chart->setChart(m_chart.data());
+    ui->widget_chartCurrentlyInfected->setRenderHint(QPainter::Antialiasing);
+    ui->widget_chartCurrentlyInfected->setChart(m_chart.data());
 
 
 }
 
 void MainWindow::updateInputParameters()
 {
+    qDebug() << "Updating input parameters";
 
     InputPerameters inputParameters;
-    inputParameters.incubationPeriodMean = ui->lineEdit_incubationPeriodMean->text().toDouble();
-    inputParameters.incubationPeriodSigma = ui->lineEdit_incubationPeriodSigma->text().toDouble();
-    inputParameters.mildSymptomsPeriodMean = ui->lineEdit_MildIllnessPeriodMean->text().toDouble();
-    inputParameters.mildSymptomsPeriodSigma = ui->lineEdit_MildIllnessPeriodSigma->text().toDouble();
-    inputParameters.severeSymptomsPeriodMean = ui->lineEdit_severeIllnessPeriodMean->text().toDouble();
-    inputParameters.severeSymptomsPeriodSigma = ui->lineEdit_severeIllnessPeriodSigma->text().toDouble();
-    inputParameters.transmitionRateMin = ui->lineEdit_transmissionRateMin->text().toDouble();
-    inputParameters.transmisionRateMax = ui->lineEdit_transmissionRateMax->text().toDouble();
-    inputParameters.deathRateMin = ui->lineEdit_deathRateMin->text().toDouble();
-    inputParameters.deathRateMax = ui->lineEdit_deathRateMax->text().toDouble();
-    inputParameters.persentSevereCases = ui->lineEdit_percentSevereCases->text().toDouble();
+    inputParameters.incubationPeriodMean = ui->doubleSpinBox_incubationPeriodMean->value();
+    inputParameters.incubationPeriodSigma = ui->doubleSpinBox_incubationPeriodSigma->value();
+    inputParameters.mildSymptomsPeriodMean = ui->doubleSpinBox_mildIllnessPeriodMean->value();
+    inputParameters.mildSymptomsPeriodSigma = ui->doubleSpinBox_mildIllnessPeriodSigma->value();
+    inputParameters.severeSymptomsPeriodMean = ui->doubleSpinBox_severeIllnessPeriodMean->value();
+    inputParameters.severeSymptomsPeriodSigma = ui->doubleSpinBox_severeIllnessPeriodSigma->value();
+    inputParameters.transmitionRateMin = ui->doubleSpinBox_transmissionRateMin->value();
+    inputParameters.transmisionRateMax = ui->doubleSpinBox_transmissionRateMax->value();
+    inputParameters.deathRateMin = ui->doubleSpinBox_deathRateMin->value();
+    inputParameters.deathRateMax = ui->doubleSpinBox_deathRateMax->value();
+    inputParameters.persentSevereCases = ui->doubleSpinBox_percentSevereCases->value();
 
-    runner->UpdateInputParameters(&inputParameters);
+    simulation->UpdateInputParameters(&inputParameters);
 
     // persons property - m_probabilityToInfect = (m_incubationPeriod + m_illnessPeriod) / m_infectionRate;
 
@@ -169,4 +173,12 @@ void MainWindow::updateOutputParametersOnGUI(const OutputParameters *outputParam
     if (outputParameters->numberOfInfections > maxNumOfInfections)
         maxNumOfInfections = outputParameters->numberOfInfections;
     yAxis->setMax(maxNumOfInfections + 0.1*maxNumOfInfections);
+}
+
+void MainWindow::reset()
+{
+    simulation->restart();
+    populationMap->clean();
+
+    infectionSeries->clear();
 }

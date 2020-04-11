@@ -27,6 +27,7 @@ public:
     void OBSOLATE_setInitialMap();
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void drawNthCell(CellCoordinates currentCell, QBrush brush);
+    void clean();
     void OBSOLATE_updateNextGeneration();
     void OBSOLATE_updateCellState(CellCoordinates currentCell);
     void drawInitialGeneration();
@@ -59,6 +60,7 @@ private:
     QBrush severeColorBrush = QBrush(QColor(255, 0, 0));
     QBrush mildColorBrush = QBrush(QColor(250, 174, 21));
     QBrush incubationColorBrush = QBrush(QColor(243, 250, 21));
+//    QBrush recoveredColorBrush = QBrush(QColor(0, 255, 50));
 };
 
 

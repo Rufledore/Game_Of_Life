@@ -117,6 +117,21 @@ void SimulationCore::updateMap()
 
 }
 
+void SimulationCore::restart()
+{
+    infectedPopulationMap->clear();
+    recoveredPopulationMap->clear();
+    outputParameters.numberOfDays = 0;
+    outputParameters.numberOfDeaths = 0;
+    outputParameters.numberOfRecovered = 0;
+    outputParameters.numberOfInfections = 0;
+    outputParameters.numberOfMildSymptoms = 0;
+    outputParameters.numberOfSevereSymptoms = 0;
+    outputParameters.numberOfTotalInfections = 0;
+
+    updatedOutputParameters(&outputParameters);
+}
+
 void SimulationCore::calculateOutputParameters(CellCoordinates coordinates)
 {
     Person* clickedPerson = &(*infectedPopulationMap)[coordinates]; // If the key is not in the map it is automatically generated.
