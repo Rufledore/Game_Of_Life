@@ -506,14 +506,14 @@
        <string>GroupBox</string>
       </property>
       <layout class="QGridLayout" name="gridLayout">
-       <item row="1" column="0">
-        <widget class="QWidget" name="widget_chartTotalData" native="true"/>
-       </item>
        <item row="0" column="0">
         <widget class="QChartView" name="widget_chartCurrentlyInfected" native="true"/>
        </item>
+       <item row="1" column="0">
+        <widget class="QChartView" name="widget_chartDailyInfections" native="true"/>
+       </item>
        <item row="2" column="0">
-        <widget class="QWidget" name="widget_chartInfectedPerDay" native="true"/>
+        <widget class="QChartView" name="widget_chartTotalParameters" native="true"/>
        </item>
       </layout>
      </widget>

@@ -6,6 +6,7 @@
 #include <QtCharts/QChart>
 #include <QtCharts/QLineSeries>
 #include <QtCharts/QValueAxis>
+#include <QtCharts/QBarSeries>
 
 #include "game.h"
 #include "populationmap.h"
@@ -29,10 +30,21 @@ private:
     Ui::MainWindow *ui;
 
     // Infection Chart
-    QSharedPointer<QtCharts::QChart> m_chart;
-    QSharedPointer<QtCharts::QLineSeries> infectionSeries;
-    QSharedPointer<QtCharts::QValueAxis> yAxis;
-    QSharedPointer<QtCharts::QValueAxis> xAxis;
+    QSharedPointer<QtCharts::QChart> m_chartCurrentInfections;
+    QSharedPointer<QtCharts::QLineSeries> currentInfectionSeries;
+    QSharedPointer<QtCharts::QValueAxis> yAxisInfections;
+    QSharedPointer<QtCharts::QValueAxis> xAxisDays;
+
+    QSharedPointer<QtCharts::QChart> m_chartTotalParameters;
+    QSharedPointer<QtCharts::QLineSeries> totalInfectionSeries;
+    QSharedPointer<QtCharts::QLineSeries> totalRecoveredSeries;
+    QSharedPointer<QtCharts::QLineSeries> totalDeadSeries;
+    QSharedPointer<QtCharts::QValueAxis> yAxisTotal;
+
+    QSharedPointer<QtCharts::QChart> m_chartDailyInfections;
+    QSharedPointer<QtCharts::QBarSet> dailyInfectedSet;
+    QSharedPointer<QtCharts::QBarSeries> dailyInfectionSeries;
+    QSharedPointer<QtCharts::QValueAxis> yAxisDailyInfected;
 
     // Graphical map
     QSharedPointer<PopulationMap> populationMap;
