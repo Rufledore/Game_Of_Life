@@ -16,6 +16,7 @@ public:
 
     // Map of infected people.
     QSharedPointer<InfectionMap> infectedPopulationMap;               //A table with vitaliti states of each cell of the map. The key is QPait of coordinates.
+    QSharedPointer<InfectionMap> recoveredPopulationMap;               //A table with vitaliti states of each cell of the map. The key is QPait of coordinates.
     QList<CellCoordinates> keysOfInfectors;
 
     // Simulation methods:

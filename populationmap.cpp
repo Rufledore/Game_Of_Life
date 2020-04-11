@@ -11,7 +11,7 @@
 
 PopulationMap::PopulationMap(QWidget *parent) :
     QGraphicsScene(parent),
-    cellWidth(6),
+    cellWidth(4),
     cellSeparator(cellWidth < 10 ? 1 : cellWidth/10),
     fieldWidth((cellsPerRow + 2) * cellWidth + (cellsPerRow - 1) * cellSeparator),  //WIdth = (Num of cells * width of cell) + (Num of cells - 1) * separator) + 2 cells for the frame;
     fieldHeight((cellsPerRow + 2) * cellWidth + (cellsPerRow - 1) * cellSeparator), //(cellsPerRow * (cellWidth + cellSeparator)) + cellWidth * 2 - cellSeparator;

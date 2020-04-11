@@ -3,6 +3,7 @@
 
 #include <random>
 #include <QRandomGenerator>
+#include <QTime>
 
 
 class RandomGenerator
@@ -15,7 +16,7 @@ public:
     double generateUniform(double min, double max);
 
 private:
-    QRandomGenerator uniformGenerator = QRandomGenerator(42);
+    QRandomGenerator uniformGenerator = QRandomGenerator(static_cast<uint>(QTime::currentTime().msecsSinceStartOfDay()));
     std::normal_distribution<double> normalGenerator;
 };
 

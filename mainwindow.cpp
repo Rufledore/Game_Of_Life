@@ -157,6 +157,9 @@ void MainWindow::updateOutputParametersOnGUI(const OutputParameters *outputParam
     ui->label_indicator_numberOfDays->setNum(outputParameters->numberOfDays);
     ui->label_indicator_numberOfMildCases->setNum(outputParameters->numberOfMildSymptoms);
     ui->label_indicator_numberOfSevereCases->setNum(outputParameters->numberOfSevereSymptoms);
+    ui->label_indicator_numberOfTotalInfections->setNum(outputParameters->numberOfTotalInfections);
+    ui->label_indicator_numberOfRecovered->setNum(outputParameters->numberOfRecovered);
+
 
     static int maxNumOfInfections = 0;
     infectionSeries->append(outputParameters->numberOfDays, outputParameters->numberOfInfections);

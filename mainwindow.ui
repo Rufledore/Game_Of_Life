@@ -16,7 +16,7 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout_4" columnstretch="1,2">
     <item row="0" column="0">
-     <layout class="QVBoxLayout" name="verticalLayout" stretch="0,1,0,0,0,0,0,1,1,3">
+     <layout class="QVBoxLayout" name="verticalLayout" stretch="0,1,0,0,0,0,0,0,0,1,1,3">
       <item>
        <layout class="QGridLayout" name="gridLayout_3" rowstretch="0,0,0,0,0,0,0,0,0,0" columnstretch="0,0,0,0" rowminimumheight="0,0,0,0,0,0,0,0,0,0">
         <item row="3" column="0">
@@ -168,11 +168,34 @@
        </layout>
       </item>
       <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_7">
+        <item>
+         <widget class="QLabel" name="label_15">
+          <property name="text">
+           <string>Total Number of Infections:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_indicator_numberOfTotalInfections">
+          <property name="font">
+           <font>
+            <pointsize>17</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>0</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
          <widget class="QLabel" name="label">
           <property name="text">
-           <string>Infected:</string>
+           <string>Currently Infected:</string>
           </property>
          </widget>
         </item>
@@ -247,6 +270,29 @@
         </item>
         <item>
          <widget class="QLabel" name="label_indicator_numberOfDeaths">
+          <property name="font">
+           <font>
+            <pointsize>17</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>0</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_6">
+        <item>
+         <widget class="QLabel" name="label_14">
+          <property name="text">
+           <string>Number of recovered:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_indicator_numberOfRecovered">
           <property name="font">
            <font>
             <pointsize>17</pointsize>

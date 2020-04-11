@@ -5,7 +5,8 @@
 
 SimulationCore::SimulationCore(QObject *parent) :
     QObject(parent),
-    infectedPopulationMap(new InfectionMap)
+    infectedPopulationMap(new InfectionMap),
+    recoveredPopulationMap(new InfectionMap)
 {
 }
 
@@ -22,7 +23,13 @@ void SimulationCore::updateInfectionsForTheDay()
     while (infectorKey != keysOfInfectors.end()) {
 
         Person infector = infectedPopulationMap->value(*infectorKey);
-        if (infector.vitalityState == VitalityState::healthy || infector.vitalityState == VitalityState::dead) {
+        if (infector.vitalityState == VitalityState::healthy) {
+            infectedPopulationMap->remove(*infectorKey);
+            recoveredPopulationMap->insert(*infectorKey, infector);
+            infectorKey = keysOfInfectors.erase(infectorKey);
+            continue;
+        }
+        if (infector.vitalityState == VitalityState::dead) {
             infectorKey = keysOfInfectors.erase(infectorKey);
             continue;
         }
@@ -31,14 +38,15 @@ void SimulationCore::updateInfectionsForTheDay()
         for (infectedPersonCoordinates = infectedPeopleCoordinates.begin();
              infectedPersonCoordinates != infectedPeopleCoordinates.end();
              ++infectedPersonCoordinates) {
-            if (!infectedPopulationMap->contains(*infectedPersonCoordinates)) {
+            if (!infectedPopulationMap->contains(*infectedPersonCoordinates) && !recoveredPopulationMap->contains(*infectedPersonCoordinates)) {
                 Person infectedPerson;
                 infectedPerson.calculateInfectionParameters(inputParameters);
                 infectedPerson.updateVitalityState();
                 infectedPopulationMap->insert(*infectedPersonCoordinates, infectedPerson);
                 if (infectedPerson.stateIsChanged())
                     calculateOutputParameters(*infectedPersonCoordinates);
-            } else if (infectedPopulationMap->value(*infectedPersonCoordinates).vitalityState == VitalityState::healthy) {
+//            } else if (infectedPopulationMap->value(*infectedPersonCoordinates).vitalityState == VitalityState::healthy) {
+            } else if (recoveredPopulationMap->contains(*infectedPersonCoordinates)) {
                 //TODO: this case should be updated when the immunization starts to be considered during the simulation.
                 /*
                 Person infectedPerson;
@@ -129,10 +137,12 @@ void SimulationCore::calculateOutputParameters(CellCoordinates coordinates)
             --outputParameters.numberOfMildSymptoms;
             --outputParameters.numberOfInfections;
         }
+        ++outputParameters.numberOfRecovered;
     }
         break;
     case VitalityState::infected_incubation:
         ++outputParameters.numberOfInfections;
+        ++outputParameters.numberOfTotalInfections;
         break;
     case VitalityState::infected_mild_symptoms:
         ++outputParameters.numberOfMildSymptoms;
@@ -173,6 +183,7 @@ void SimulationCore::changeClickedPersonState(CellCoordinates cell)
     switch (clickedPerson->vitalityState) {
     case VitalityState::healthy:
         ++outputParameters.numberOfInfections;
+        ++outputParameters.numberOfTotalInfections;
         clickedPerson->calculateInfectionParameters(inputParameters);
         break;
     case VitalityState::infected_incubation:
@@ -184,6 +195,7 @@ void SimulationCore::changeClickedPersonState(CellCoordinates cell)
         break;
     case VitalityState::infected_severe_symptoms:
         --outputParameters.numberOfInfections;
+        --outputParameters.numberOfTotalInfections;
         --outputParameters.numberOfSevereSymptoms;
         ++outputParameters.numberOfDeaths;
         break;

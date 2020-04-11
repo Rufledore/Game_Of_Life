@@ -28,10 +28,12 @@ struct OutputParameters
 {
 
     // Output parameters
+    int numberOfTotalInfections = 0;
     int numberOfInfections = 0;
     int numberOfMildSymptoms = 0;
     int numberOfSevereSymptoms = 0;
     int numberOfDeaths = 0;
+    int numberOfRecovered = 0;
     int numberOfDays = 0;
 };
 
