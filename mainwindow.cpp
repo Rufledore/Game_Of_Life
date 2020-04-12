@@ -11,11 +11,37 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     m_chartCurrentInfections(new QtCharts::QChart),
-    currentInfectionSeries(new QtCharts::QLineSeries),
+    currentInfectionsSeries(new QtCharts::QLineSeries),
+    dailyNewInfectionsSeries(new QtCharts::QLineSeries),
     yAxisInfections(new QtCharts::QValueAxis),
-    xAxisDays(new QtCharts::QValueAxis),
+    xAxisInfections(new QtCharts::QValueAxis),
+    m_chartTotalParameters(new QtCharts::QChart),
+    totalInfectionSeries(new QtCharts::QLineSeries),
+    totalRecoveredSeries(new QtCharts::QLineSeries),
+    totalDeadSeries(new QtCharts::QLineSeries),
+    yAxisTotal(new QtCharts::QValueAxis),
+    xAxisTotal(new QtCharts::QValueAxis),
+    m_chartDailyInfections(new QtCharts::QChart),
+    dailyInfectedSet(new QtCharts::QBarSet("Daily cases")),
+    dailyInfectionSeries(new QtCharts::QBarSeries),
+    yAxisDailyInfected(new QtCharts::QValueAxis),
+    xAxisDailyInfected(new QtCharts::QBarCategoryAxis),
     populationMap(new PopulationMap(this)),
     simulation(new SimulationCore)
+  /*
+   QSharedPointer<QtCharts::QChart> m_chartTotalParameters;
+    QSharedPointer<QtCharts::QLineSeries> totalInfectionSeries;
+    QSharedPointer<QtCharts::QLineSeries> totalRecoveredSeries;
+    QSharedPointer<QtCharts::QLineSeries> totalDeadSeries;
+    QSharedPointer<QtCharts::QValueAxis> yAxisTotal;
+
+    QSharedPointer<QtCharts::QChart> m_chartDailyInfections;
+    QSharedPointer<QtCharts::QBarSet> dailyInfectedSet;
+    QSharedPointer<QtCharts::QBarSeries> dailyInfectionSeries;
+    QSharedPointer<QtCharts::QValueAxis> yAxisDailyInfected;
+
+
+  */
 {
     /* TODOs:
      * 2. Separate the infection possibility between close neighbors and random cells from the map.
@@ -94,40 +120,57 @@ void MainWindow::setUpChart()
 //    m_numberOfInfected = 5;
     OutputParameters parameters = simulation->getOutputParameters();
 
-    m_chartCurrentInfections->legend()->hide();
-    m_chartCurrentInfections->addSeries(currentInfectionSeries.get());
+    m_chartCurrentInfections->setVisible(true);
+    m_chartCurrentInfections->legend()->setAlignment(Qt::AlignTop);
+    m_chartCurrentInfections->addSeries(currentInfectionsSeries.get());
+    m_chartCurrentInfections->addSeries(dailyNewInfectionsSeries.get());
 
-    QPen pen = currentInfectionSeries->pen();
+    currentInfectionsSeries->setName("Currently infected");
+    dailyNewInfectionsSeries->setName("New cases for the day");
+
+    QPen pen = currentInfectionsSeries->pen();
     pen.setColor(QColor(255, 0 , 0));
-    currentInfectionSeries->setPen(pen);
+    currentInfectionsSeries->setPen(pen);
+    QPen dailyPen = dailyNewInfectionsSeries->pen();
+    dailyPen.setColor(QColor(255, 127 , 0));
+    dailyNewInfectionsSeries->setPen(dailyPen);
 
-    m_chartCurrentInfections->setTitle(QString::fromStdString("Infections"));
+    m_chartCurrentInfections->setTitle(QString::fromStdString("Currently infected"));
     m_chartCurrentInfections->setPlotAreaBackgroundBrush(QBrush(Qt::white));
     m_chartCurrentInfections->setPlotAreaBackgroundVisible(true);
     m_chartCurrentInfections->setBackgroundRoundness(0);
     m_chartCurrentInfections->setMargins(QMargins(0, 0, 0, 0));
 
     // Set x and y axis
-    xAxisDays->setTitleText("Time [days]");
-    xAxisDays->setRange(0, static_cast<int>(parameters.numberOfDays * 1.3));
-    yAxisInfections->setTitleText("Number of infected");
+    xAxisInfections->setTitleText("Time [days]");
+    xAxisInfections->setRange(0, static_cast<int>(parameters.numberOfDays * 1.3));
+    yAxisInfections->setTitleText("Current number of cases");
     yAxisInfections->setRange(0, static_cast<int>(parameters.numberOfInfections * 1.3));
+    yAxisDailyInfected->setTitleText("New cases");
 
 
-    m_chartCurrentInfections->addAxis(xAxisDays.data(), Qt::AlignBottom);
+    m_chartCurrentInfections->addAxis(xAxisInfections.data(), Qt::AlignBottom);
     m_chartCurrentInfections->addAxis(yAxisInfections.data(), Qt::AlignLeft);
+    m_chartCurrentInfections->addAxis(yAxisDailyInfected.data(), Qt::AlignRight);
 
-    currentInfectionSeries->attachAxis(xAxisDays.data());
-    currentInfectionSeries->attachAxis(yAxisInfections.data());
+    currentInfectionsSeries->attachAxis(xAxisInfections.data());
+    currentInfectionsSeries->attachAxis(yAxisInfections.data());
+    dailyNewInfectionsSeries->attachAxis(xAxisInfections.data());
+    dailyNewInfectionsSeries->attachAxis(yAxisDailyInfected.data());
     ui->widget_chartCurrentlyInfected->setRenderHint(QPainter::Antialiasing);
     ui->widget_chartCurrentlyInfected->setChart(m_chartCurrentInfections.data());
 
-
     //Total Chart
-    m_chartTotalParameters->legend()->hide();
+//    m_chartTotalParameters->legend()->hide();
+    m_chartTotalParameters->setVisible(true);
+    m_chartTotalParameters->legend()->setAlignment(Qt::AlignTop);
     m_chartTotalParameters->addSeries(totalDeadSeries.get());
     m_chartTotalParameters->addSeries(totalInfectionSeries.get());
     m_chartTotalParameters->addSeries(totalRecoveredSeries.get());
+
+    totalInfectionSeries->setName("Total number of cases");
+    totalRecoveredSeries->setName("Recovered");
+    totalDeadSeries->setName("Dead");
 
     QPen infectedPen = totalInfectionSeries->pen();
     QPen recoveredPen = totalRecoveredSeries->pen();
@@ -148,14 +191,16 @@ void MainWindow::setUpChart()
     // Set x and y axis
     yAxisTotal->setTitleText("Number of people");
     yAxisTotal->setRange(0, static_cast<int>(parameters.numberOfTotalInfections * 1.3));
+    xAxisTotal->setTitleText("Time [days]");
+    xAxisTotal->setRange(0, static_cast<int>(parameters.numberOfDays * 1.3));
 
 
-    m_chartTotalParameters->addAxis(xAxisDays.data(), Qt::AlignBottom);
+    m_chartTotalParameters->addAxis(xAxisTotal.data(), Qt::AlignBottom);
     m_chartTotalParameters->addAxis(yAxisTotal.data(), Qt::AlignLeft);
 
-    totalInfectionSeries->attachAxis(xAxisDays.data());
-    totalRecoveredSeries->attachAxis(xAxisDays.data());
-    totalDeadSeries->attachAxis(xAxisDays.data());
+    totalInfectionSeries->attachAxis(xAxisTotal.data());
+    totalRecoveredSeries->attachAxis(xAxisTotal.data());
+    totalDeadSeries->attachAxis(xAxisTotal.data());
     totalInfectionSeries->attachAxis(yAxisTotal.data());
     totalRecoveredSeries->attachAxis(yAxisTotal.data());
     totalDeadSeries->attachAxis(yAxisTotal.data());
@@ -163,36 +208,43 @@ void MainWindow::setUpChart()
     ui->widget_chartTotalParameters->setChart(m_chartTotalParameters.data());
 
 
+// TODO the bar chart that should present the daily number of new cases cause a segmentation fault.
+//    that should be investigated
+/*
     // Daily chart
     m_chartDailyInfections->legend()->hide();
-    m_chartDailyInfections->addSeries(dailyInfectionSeries.get());
     dailyInfectionSeries->append(dailyInfectedSet.get());
+    m_chartDailyInfections->addSeries(dailyInfectionSeries.get());
+    m_chartDailyInfections->setAnimationOptions(QChart::SeriesAnimations);
 
-    QPen penDaily = dailyInfectionSeries->pen();
-    pen.setColor(QColor(255, 127, 0));
-    dailyInfectionSeries->setPen(penDaily);
+    QPen penDaily = dailyInfectedSet->pen();
+    penDaily.setColor(QColor(255, 127, 0));
+    dailyInfectedSet->setPen(penDaily);
 
-    m_chartDailyInfections->setTitle(QString::fromStdString("Infections"));
+    m_chartDailyInfections->setTitle(QString::fromStdString("Infections per day"));
     m_chartDailyInfections->setPlotAreaBackgroundBrush(QBrush(Qt::white));
     m_chartDailyInfections->setPlotAreaBackgroundVisible(true);
     m_chartDailyInfections->setBackgroundRoundness(0);
     m_chartDailyInfections->setMargins(QMargins(0, 0, 0, 0));
 
     // Set x and y axis
-    xAxisDays->setTitleText("Time [days]");
-    xAxisDays->setRange(0, static_cast<int>(parameters.numberOfDays * 1.3));
-    yAxisInfections->setTitleText("Number of infected");
-    yAxisInfections->setRange(0, static_cast<int>(parameters.numberOfInfections * 1.3));
+    xAxisDailyInfected->setTitleText("Time [days]");
+    QStringList vals = {"1", "2", "3"};
+    xAxisDailyInfected->append(vals);
+//    xAxisDailyInfected->setRange(0, static_cast<int>(parameters.numberOfDays * 1.3));
+    yAxisDailyInfected->setTitleText("Number of cases");
+    yAxisDailyInfected->setRange(0, static_cast<int>(parameters.numberOfInfections * 1.3)); // These ranges are unnecessary
 
 
-    m_chartDailyInfections->addAxis(xAxisDays.data(), Qt::AlignBottom);
-    m_chartDailyInfections->addAxis(yAxisInfections.data(), Qt::AlignLeft);
+    m_chartDailyInfections->addAxis(xAxisDailyInfected.data(), Qt::AlignBottom);
+    dailyInfectionSeries->attachAxis(xAxisDailyInfected.data());
 
-    dailyInfectionSeries->attachAxis(xAxisDays.data());
-    dailyInfectionSeries->attachAxis(yAxisInfections.data());
-    ui->widget_chartCurrentlyInfected->setRenderHint(QPainter::Antialiasing);
-    ui->widget_chartCurrentlyInfected->setChart(m_chartDailyInfections.data());
+    m_chartDailyInfections->addAxis(yAxisDailyInfected.data(), Qt::AlignLeft);
+    dailyInfectionSeries->attachAxis(yAxisDailyInfected.data());
 
+    ui->widget_chartDailyInfections->setRenderHint(QPainter::Antialiasing);
+    ui->widget_chartDailyInfections->setChart(m_chartDailyInfections.data());
+*/
 }
 
 void MainWindow::updateInputParameters()
@@ -230,13 +282,40 @@ void MainWindow::updateOutputParametersOnGUI(const OutputParameters *outputParam
 
 
     static int maxNumOfInfections = 0;
-    currentInfectionSeries->append(outputParameters->numberOfDays, outputParameters->numberOfInfections);
+    static int maxNumberOfTotalCases = 0;
+    static int maxNumberOfDailyCases = 0;
+    static int previousNumberOfTotalCases = 0;
 
-    xAxisDays->setMax(outputParameters->numberOfDays + 0.1*outputParameters->numberOfDays);
+    int numberOfDailyCases = outputParameters->numberOfTotalInfections - previousNumberOfTotalCases;
+    previousNumberOfTotalCases = outputParameters->numberOfTotalInfections;
+
+    currentInfectionsSeries->append(outputParameters->numberOfDays, outputParameters->numberOfInfections);
+    dailyNewInfectionsSeries->append(outputParameters->numberOfDays, numberOfDailyCases);
+
+    xAxisInfections->setMax(outputParameters->numberOfDays + 0.1*outputParameters->numberOfDays);
 
     if (outputParameters->numberOfInfections > maxNumOfInfections)
         maxNumOfInfections = outputParameters->numberOfInfections;
     yAxisInfections->setMax(maxNumOfInfections + 0.1*maxNumOfInfections);
+
+    if (numberOfDailyCases > maxNumberOfDailyCases)
+        maxNumberOfDailyCases = numberOfDailyCases;
+    yAxisDailyInfected->setMax(maxNumberOfDailyCases + 0.1*maxNumberOfDailyCases);
+
+    ////////////////////////////
+    totalDeadSeries->append(outputParameters->numberOfDays, outputParameters->numberOfDeaths);
+    totalRecoveredSeries->append(outputParameters->numberOfDays, outputParameters->numberOfRecovered);
+    totalInfectionSeries->append(outputParameters->numberOfDays, outputParameters->numberOfTotalInfections);
+
+
+    xAxisTotal->setMax(outputParameters->numberOfDays + 0.1*outputParameters->numberOfDays);
+
+    if (outputParameters->numberOfTotalInfections > maxNumberOfTotalCases)
+        maxNumberOfTotalCases = outputParameters->numberOfTotalInfections;
+    yAxisTotal->setMax(maxNumberOfTotalCases + 0.1*maxNumberOfTotalCases);
+
+    ////////////////////
+
 }
 
 void MainWindow::reset()
@@ -244,5 +323,5 @@ void MainWindow::reset()
     simulation->restart();
     populationMap->clean();
 
-    currentInfectionSeries->clear();
+    currentInfectionsSeries->clear();
 }
