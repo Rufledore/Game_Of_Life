@@ -30,6 +30,7 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    int cellsPerRow;
 
     // Infection Chart
     QSharedPointer<QtCharts::QChart> m_chartCurrentInfections;
@@ -61,8 +62,10 @@ private:
     void setUpChart();
 
 private slots:
+
     void updateInputParameters();
     void updateOutputParametersOnGUI(const OutputParameters* outputParameters);
+    void updateNumberOfCellsPerRow();
     void reset();
 
 };

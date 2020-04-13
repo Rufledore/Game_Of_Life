@@ -3,8 +3,9 @@
 
 #include "simulationcore.h"
 
-SimulationCore::SimulationCore(QObject *parent) :
+SimulationCore::SimulationCore(QObject *parent, int peoplePerRow) :
     QObject(parent),
+    m_peoplePerRow(peoplePerRow),
     infectedPopulationMap(new InfectionMap),
     recoveredPopulationMap(new InfectionMap)
 {
@@ -86,8 +87,8 @@ QList<CellCoordinates> SimulationCore::findPeopleInfectedBy(const Person* infect
     for (int i = 0; i < maxInfectedPerDay; ++i) {
         double randomInfectionKoeficient = randomGenerator.generateUniform(0, 1);
         if (randomInfectionKoeficient < probabilityToInfect) {
-            int x = static_cast<int>(randomGenerator.generateUniform(0, peoplePerRow));
-            int y = static_cast<int>(randomGenerator.generateUniform(0, peoplePerRow));
+            int x = static_cast<int>(randomGenerator.generateUniform(0, m_peoplePerRow));
+            int y = static_cast<int>(randomGenerator.generateUniform(0, m_peoplePerRow));
             infected.append(CellCoordinates(x, y));  // In this way there is a very little lower chance for the last of the row to appear.
         }
     }
@@ -117,8 +118,10 @@ void SimulationCore::updateMap()
 
 }
 
-void SimulationCore::restart()
+void SimulationCore::restart(int peoplePerRow)
 {
+    m_peoplePerRow = peoplePerRow;
+
     infectedPopulationMap->clear();
     recoveredPopulationMap->clear();
     outputParameters.numberOfDays = 0;

@@ -1,5 +1,6 @@
 #include <QGridLayout>
 #include <QDoubleSpinBox>
+#include <QSpinBox>
 #include <QDebug>
 
 #include "mainwindow.h"
@@ -67,6 +68,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->doubleSpinBox_transmissionRateMax, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::updateInputParameters);
     connect(ui->doubleSpinBox_deathRateMin, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::updateInputParameters);
     connect(ui->doubleSpinBox_deathRateMax, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::updateInputParameters);
+//    connect(ui->spinBox_numberOfCellsPerAxis, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::updateNumberOfCellsPerRow);
+    connect(ui->spinBox_numberOfCellsPerAxis, &QSpinBox::editingFinished, this, &MainWindow::updateNumberOfCellsPerRow);
+
+
 
     connect(populationMap.data(), &PopulationMap::clicked, simulation.data(), &SimulationCore::changeClickedPersonState);
     connect(simulation.data(), &SimulationCore::populationStatusUpdated, populationMap.data(), &PopulationMap::updatePopulationStatus);
@@ -89,6 +94,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->doubleSpinBox_mildIllnessPeriodSigma->setValue(5);
     ui->doubleSpinBox_severeIllnessPeriodMean->setValue(32);
     ui->doubleSpinBox_severeIllnessPeriodSigma->setValue(7);
+    ui->spinBox_numberOfCellsPerAxis->setValue(Constants::numberOfCellsPerRow);
 /*
     ui->lineEdit_deathRateMin->textChanged();
     ui->lineEdit_deathRateMax;
@@ -318,10 +324,25 @@ void MainWindow::updateOutputParametersOnGUI(const OutputParameters *outputParam
 
 }
 
+void MainWindow::updateNumberOfCellsPerRow()
+{
+    cellsPerRow = ui->spinBox_numberOfCellsPerAxis->value();
+
+    if (cellsPerRow < 10) {
+        ui->spinBox_numberOfCellsPerAxis->setValue(10);
+        cellsPerRow = ui->spinBox_numberOfCellsPerAxis->value();
+    }
+    else if (cellsPerRow > 200) {
+        ui->spinBox_numberOfCellsPerAxis->setValue(200);
+        cellsPerRow = ui->spinBox_numberOfCellsPerAxis->value();
+    }
+
+}
+
 void MainWindow::reset()
 {
-    simulation->restart();
-    populationMap->clean();
+    simulation->restart(cellsPerRow);
+    populationMap->restart(cellsPerRow);
 
     currentInfectionsSeries->clear();
 }

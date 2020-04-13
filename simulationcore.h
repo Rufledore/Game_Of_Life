@@ -12,7 +12,7 @@ class SimulationCore : public QObject
 {
     Q_OBJECT
 public:
-    explicit SimulationCore(QObject *parent = nullptr);
+    explicit SimulationCore(QObject *parent = nullptr, int peoplePerRow = Constants::numberOfCellsPerRow);
 
     // Map of infected people.
     QSharedPointer<InfectionMap> infectedPopulationMap;               //A table with vitaliti states of each cell of the map. The key is QPait of coordinates.
@@ -24,7 +24,7 @@ public:
     QList<CellCoordinates> findPeopleInfectedBy(const Person* infector);
 
     void updateMap();
-    void restart();
+    void restart(int peoplePerRow);
     void calculateOutputParameters(CellCoordinates coordinates);
     void UpdateInputParameters(const InputPerameters* parameters);
 
@@ -45,7 +45,7 @@ private:
     OutputParameters outputParameters;
     RandomGenerator randomGenerator;
 
-    int peoplePerRow = Constants::numberOfCellsPerRow;
+    int m_peoplePerRow;
 
 };
 

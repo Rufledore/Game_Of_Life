@@ -21,13 +21,13 @@ class PopulationMap : public QGraphicsScene
 
 public:
 
-    explicit PopulationMap(QWidget *parent = nullptr);
+    explicit PopulationMap(QWidget *parent = nullptr, int cellsPerRow = Constants::numberOfCellsPerRow);
     ~PopulationMap();
 
     void OBSOLATE_setInitialMap();
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    void drawNthCell(CellCoordinates currentCell, QBrush brush);
-    void clean();
+    void drawNthCell(CellCoordinates currentCell, QBrush brush, QPainter* painter);
+    void restart(int cellsPerRow);
     void OBSOLATE_updateNextGeneration();
     void OBSOLATE_updateCellState(CellCoordinates currentCell);
     void drawInitialGeneration();
@@ -43,7 +43,7 @@ public slots:
     void updatePopulationStatus(const InfectionMap* map);
 
 private:
-    int cellsPerRow = Constants::numberOfCellsPerRow;
+    int m_cellsPerRow;
     int cellWidth;
     int cellSeparator;
     int fieldWidth;
@@ -52,9 +52,10 @@ private:
     QSharedPointer<QHash<CellCoordinates, VitalityState>> backgroundMap;               //A table with vitaliti states of each cell of the map. The key is QPait of coordinates.
     QScopedPointer<QGraphicsScene> gameGraphicScene;                                   //A graphics scebe which present the game map
     QSharedPointer<QPixmap> gamePixmap;                                                //A surface where the game is painted
-    QScopedPointer<QPainter> gamePainter;                                              //A tool for paint and repaint the game map
-    QScopedPointer<QGraphicsPixmapItem> graphicItem;
+    QSharedPointer<QPainter> gamePainter;                                              //A tool for paint and repaint the game map
+    QSharedPointer<QGraphicsPixmapItem> graphicItem;
     QPoint clickedPoint;
+    QBrush backgroundBrush = QBrush(QColor(0, 0, 0));
     QBrush healthyColorBrush = QBrush(QColor(200, 200, 200));
     QBrush deadColorBrush = QBrush(QColor(0, 0, 0));
     QBrush severeColorBrush = QBrush(QColor(255, 0, 0));
