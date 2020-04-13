@@ -9,6 +9,7 @@ class Person
 public:
     Person();
     void updateDayCounters();
+    void updateProbabilityToInfect(const InputPerameters& parameters);
     void calculateInfectionParameters(const InputPerameters& parameters);
     void updateVitalityState();
     void updateVitalityStateTo(const VitalityState& newState);

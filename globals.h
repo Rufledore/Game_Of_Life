@@ -17,8 +17,8 @@ struct InputPerameters
     double mildSymptomsPeriodSigma = 0;
     double severeSymptomsPeriodMean = 0;
     double severeSymptomsPeriodSigma = 0;
-    double transmitionRateMin = 0;
-    double transmisionRateMax = 0;
+    double transmissionRateMin = 0;
+    double transmissionRateMax = 0;
     double deathRateMin = 0;
     double deathRateMax = 0;
     double persentSevereCases = 0;

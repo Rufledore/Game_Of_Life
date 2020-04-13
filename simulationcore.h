@@ -27,6 +27,7 @@ public:
     void restart(int peoplePerRow);
     void calculateOutputParameters(CellCoordinates coordinates);
     void UpdateInputParameters(const InputPerameters* parameters);
+    void UpdateTransmissionProbability(double min, double max);
 
     // Getters
     OutputParameters getOutputParameters();

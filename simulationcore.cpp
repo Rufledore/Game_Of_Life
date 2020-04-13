@@ -5,9 +5,9 @@
 
 SimulationCore::SimulationCore(QObject *parent, int peoplePerRow) :
     QObject(parent),
-    m_peoplePerRow(peoplePerRow),
     infectedPopulationMap(new InfectionMap),
-    recoveredPopulationMap(new InfectionMap)
+    recoveredPopulationMap(new InfectionMap),
+    m_peoplePerRow(peoplePerRow)
 {
 }
 
@@ -187,6 +187,22 @@ void SimulationCore::UpdateInputParameters(const InputPerameters* parameters)
 {
     inputParameters = *parameters;
     qDebug() << inputParameters.deathRateMin;
+}
+
+void SimulationCore::UpdateTransmissionProbability(double min, double max)
+{
+    inputParameters.transmissionRateMin = min;
+    inputParameters.transmissionRateMax = max;
+
+    keysOfInfectors.clear();
+    keysOfInfectors = infectedPopulationMap->keys();
+    QList<CellCoordinates>::iterator infectorKey = keysOfInfectors.begin();
+
+    while (infectorKey != keysOfInfectors.end()) {
+        (*infectedPopulationMap)[*infectorKey].updateProbabilityToInfect(inputParameters);
+        infectorKey = keysOfInfectors.erase(infectorKey);
+    }
+
 }
 
 OutputParameters SimulationCore::getOutputParameters()

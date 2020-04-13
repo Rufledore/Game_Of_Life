@@ -211,6 +211,9 @@
              <property name="suffix">
               <string>%</string>
              </property>
+             <property name="maximum">
+              <double>100.000000000000000</double>
+             </property>
             </widget>
            </item>
            <item row="7" column="1" rowspan="2" colspan="2">
@@ -226,6 +229,9 @@
              <property name="buttonSymbols">
               <enum>QAbstractSpinBox::NoButtons</enum>
              </property>
+             <property name="maximum">
+              <double>99.989999999999995</double>
+             </property>
             </widget>
            </item>
            <item row="7" column="3" rowspan="2">
@@ -240,6 +246,9 @@
              </property>
              <property name="buttonSymbols">
               <enum>QAbstractSpinBox::NoButtons</enum>
+             </property>
+             <property name="maximum">
+              <double>100.000000000000000</double>
              </property>
             </widget>
            </item>
@@ -276,6 +285,9 @@
              </property>
              <property name="suffix">
               <string>%</string>
+             </property>
+             <property name="maximum">
+              <double>100.000000000000000</double>
              </property>
             </widget>
            </item>

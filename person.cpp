@@ -59,7 +59,13 @@ void Person::updateDayCounters()
 //                inIncubation = false;
 //            }
 //        }
-//    }
+    //    }
+}
+
+void Person::updateProbabilityToInfect(const InputPerameters& parameters)
+{
+    double transmisionRate = Singleton::randomGenerator().generateUniform(parameters.transmissionRateMin, parameters.transmissionRateMax);
+    probabilityToInfect = transmisionRate/(incubationPeriod + symptomsPeriod);
 }
 
 void Person::calculateInfectionParameters(const InputPerameters& parameters)
@@ -107,7 +113,7 @@ void Person::calculateInfectionParameters(const InputPerameters& parameters)
     }
 
 //  Calculate probability to infect someone in a day.
-    double transmisionRate = Singleton::randomGenerator().generateUniform(parameters.transmitionRateMin, parameters.transmisionRateMax);
+    double transmisionRate = Singleton::randomGenerator().generateUniform(parameters.transmissionRateMin, parameters.transmissionRateMax);
     probabilityToInfect = transmisionRate/(incubationPeriod + symptomsPeriod);
 
 //    vitalityState = VitalityState::infected_incubation;

@@ -63,6 +63,7 @@ private:
 
 private slots:
 
+    void updateInfectionProbability();
     void updateInputParameters();
     void updateOutputParametersOnGUI(const OutputParameters* outputParameters);
     void updateNumberOfCellsPerRow();

@@ -7,10 +7,12 @@
 #include "ui_mainwindow.h"
 #include "entity.h"
 #include "populationmap.h"
+#include "globals.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
+    cellsPerRow(Constants::numberOfCellsPerRow),
     m_chartCurrentInfections(new QtCharts::QChart),
     currentInfectionsSeries(new QtCharts::QLineSeries),
     dailyNewInfectionsSeries(new QtCharts::QLineSeries),
@@ -27,8 +29,8 @@ MainWindow::MainWindow(QWidget *parent) :
     dailyInfectionSeries(new QtCharts::QBarSeries),
     yAxisDailyInfected(new QtCharts::QValueAxis),
     xAxisDailyInfected(new QtCharts::QBarCategoryAxis),
-    populationMap(new PopulationMap(this)),
-    simulation(new SimulationCore)
+    populationMap(new PopulationMap(this, cellsPerRow)),
+    simulation(new SimulationCore(nullptr, cellsPerRow))
   /*
    QSharedPointer<QtCharts::QChart> m_chartTotalParameters;
     QSharedPointer<QtCharts::QLineSeries> totalInfectionSeries;
@@ -56,6 +58,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setUpChart();
 
     ui->graphicsView_map->setScene(populationMap.data());
+    ui->graphicsView_map->setAlignment(Qt::AlignCenter);
     connect(ui->doubleSpinBox_deathRateMax, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::updateInputParameters);
     connect(ui->doubleSpinBox_incubationPeriodMean, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::updateInputParameters);
     connect(ui->doubleSpinBox_incubationPeriodSigma, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::updateInputParameters);
@@ -64,12 +67,15 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->doubleSpinBox_mildIllnessPeriodMean, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::updateInputParameters);
     connect(ui->doubleSpinBox_mildIllnessPeriodSigma, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::updateInputParameters);
     connect(ui->doubleSpinBox_percentSevereCases, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::updateInputParameters);
-    connect(ui->doubleSpinBox_transmissionRateMin, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::updateInputParameters);
-    connect(ui->doubleSpinBox_transmissionRateMax, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::updateInputParameters);
+//    connect(ui->doubleSpinBox_transmissionRateMin, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::updateInputParameters);
+//    connect(ui->doubleSpinBox_transmissionRateMax, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::updateInputParameters);
     connect(ui->doubleSpinBox_deathRateMin, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::updateInputParameters);
     connect(ui->doubleSpinBox_deathRateMax, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::updateInputParameters);
 //    connect(ui->spinBox_numberOfCellsPerAxis, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::updateNumberOfCellsPerRow);
     connect(ui->spinBox_numberOfCellsPerAxis, &QSpinBox::editingFinished, this, &MainWindow::updateNumberOfCellsPerRow);
+
+    connect(ui->doubleSpinBox_transmissionRateMax, &QDoubleSpinBox::editingFinished, this, &MainWindow::updateInfectionProbability);
+    connect(ui->doubleSpinBox_transmissionRateMin, &QDoubleSpinBox::editingFinished, this, &MainWindow::updateInfectionProbability);
 
 
 
@@ -83,6 +89,7 @@ MainWindow::MainWindow(QWidget *parent) :
     simulation->updateMap();
 
     // Set default values
+    ui->label_indicator_numberOfPopulation->setText(QString::number(cellsPerRow * cellsPerRow));
     ui->doubleSpinBox_deathRateMin->setValue(3.3);
     ui->doubleSpinBox_deathRateMax->setValue(3.4);
     ui->doubleSpinBox_percentSevereCases->setValue(19.1);
@@ -253,6 +260,19 @@ void MainWindow::setUpChart()
 */
 }
 
+void MainWindow::updateInfectionProbability()
+{
+
+    double transmissionRateMin = ui->doubleSpinBox_transmissionRateMin->value();
+    double transmissionRateMax = ui->doubleSpinBox_transmissionRateMax->value();
+    if (transmissionRateMin >= transmissionRateMax) {
+        transmissionRateMax = transmissionRateMin + 0.01;
+        ui->doubleSpinBox_transmissionRateMax->setValue(transmissionRateMax);
+    }
+
+    simulation->UpdateTransmissionProbability(transmissionRateMin, transmissionRateMax);
+}
+
 void MainWindow::updateInputParameters()
 {
     qDebug() << "Updating input parameters";
@@ -264,11 +284,26 @@ void MainWindow::updateInputParameters()
     inputParameters.mildSymptomsPeriodSigma = ui->doubleSpinBox_mildIllnessPeriodSigma->value();
     inputParameters.severeSymptomsPeriodMean = ui->doubleSpinBox_severeIllnessPeriodMean->value();
     inputParameters.severeSymptomsPeriodSigma = ui->doubleSpinBox_severeIllnessPeriodSigma->value();
-    inputParameters.transmitionRateMin = ui->doubleSpinBox_transmissionRateMin->value();
-    inputParameters.transmisionRateMax = ui->doubleSpinBox_transmissionRateMax->value();
-    inputParameters.deathRateMin = ui->doubleSpinBox_deathRateMin->value();
-    inputParameters.deathRateMax = ui->doubleSpinBox_deathRateMax->value();
     inputParameters.persentSevereCases = ui->doubleSpinBox_percentSevereCases->value();
+
+    double transmissionRateMin = ui->doubleSpinBox_transmissionRateMin->value();
+    double transmissionRateMax = ui->doubleSpinBox_transmissionRateMax->value();
+    if (transmissionRateMin >= transmissionRateMax) {
+        transmissionRateMax = transmissionRateMin + 0.01;
+        ui->doubleSpinBox_transmissionRateMax->setValue(transmissionRateMax);
+    }
+    inputParameters.transmissionRateMin = transmissionRateMin;
+    inputParameters.transmissionRateMax = transmissionRateMax;
+
+    double deathRateMin = ui->doubleSpinBox_deathRateMin->value();
+    double deathRateMax = ui->doubleSpinBox_deathRateMax->value();
+    if (deathRateMin >= deathRateMax) {
+        deathRateMax = deathRateMin + 0.01;
+        ui->doubleSpinBox_deathRateMax->setValue(deathRateMax);
+    }
+    inputParameters.deathRateMax = deathRateMax;
+    inputParameters.deathRateMin = deathRateMin;
+
 
     simulation->UpdateInputParameters(&inputParameters);
 
@@ -291,6 +326,14 @@ void MainWindow::updateOutputParametersOnGUI(const OutputParameters *outputParam
     static int maxNumberOfTotalCases = 0;
     static int maxNumberOfDailyCases = 0;
     static int previousNumberOfTotalCases = 0;
+
+    //Reset the static variables if the simulations has been reset.
+    if (outputParameters->numberOfDays <= 1) {
+        maxNumOfInfections = 0;
+        maxNumberOfDailyCases = 0;
+        maxNumberOfTotalCases = 0;
+        previousNumberOfTotalCases = 0;
+    }
 
     int numberOfDailyCases = outputParameters->numberOfTotalInfections - previousNumberOfTotalCases;
     previousNumberOfTotalCases = outputParameters->numberOfTotalInfections;
@@ -344,5 +387,12 @@ void MainWindow::reset()
     simulation->restart(cellsPerRow);
     populationMap->restart(cellsPerRow);
 
+
+    ui->label_indicator_numberOfPopulation->setText(QString::number(cellsPerRow * cellsPerRow));
+
     currentInfectionsSeries->clear();
+    totalInfectionSeries->clear();
+    totalRecoveredSeries->clear();
+    totalDeadSeries->clear();
+    dailyNewInfectionsSeries->clear();
 }
