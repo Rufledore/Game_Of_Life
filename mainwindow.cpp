@@ -57,25 +57,27 @@ MainWindow::MainWindow(QWidget *parent) :
 
     setUpChart();
 
+    QWidget::setWindowTitle(m_WindowTitle);
+
     ui->graphicsView_map->setScene(populationMap.data());
     ui->graphicsView_map->setAlignment(Qt::AlignCenter);
-    connect(ui->doubleSpinBox_deathRateMax, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::updateInputParameters);
-    connect(ui->doubleSpinBox_incubationPeriodMean, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::updateInputParameters);
-    connect(ui->doubleSpinBox_incubationPeriodSigma, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::updateInputParameters);
-    connect(ui->doubleSpinBox_severeIllnessPeriodMean, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::updateInputParameters);
-    connect(ui->doubleSpinBox_severeIllnessPeriodSigma, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::updateInputParameters);
-    connect(ui->doubleSpinBox_mildIllnessPeriodMean, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::updateInputParameters);
-    connect(ui->doubleSpinBox_mildIllnessPeriodSigma, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::updateInputParameters);
-    connect(ui->doubleSpinBox_percentSevereCases, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::updateInputParameters);
+    connect(ui->doubleSpinBox_deathRateMax, &QDoubleSpinBox::editingFinished, this, &MainWindow::updateInputParameters);
+    connect(ui->doubleSpinBox_incubationPeriodMean, &QDoubleSpinBox::editingFinished, this, &MainWindow::updateInputParameters);
+    connect(ui->doubleSpinBox_incubationPeriodSigma, &QDoubleSpinBox::editingFinished, this, &MainWindow::updateInputParameters);
+    connect(ui->doubleSpinBox_severeIllnessPeriodMean, &QDoubleSpinBox::editingFinished, this, &MainWindow::updateInputParameters);
+    connect(ui->doubleSpinBox_severeIllnessPeriodSigma, &QDoubleSpinBox::editingFinished, this, &MainWindow::updateInputParameters);
+    connect(ui->doubleSpinBox_mildIllnessPeriodMean, &QDoubleSpinBox::editingFinished, this, &MainWindow::updateInputParameters);
+    connect(ui->doubleSpinBox_mildIllnessPeriodSigma, &QDoubleSpinBox::editingFinished, this, &MainWindow::updateInputParameters);
+    connect(ui->doubleSpinBox_percentSevereCases, &QDoubleSpinBox::editingFinished, this, &MainWindow::updateInputParameters);
 //    connect(ui->doubleSpinBox_transmissionRateMin, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::updateInputParameters);
 //    connect(ui->doubleSpinBox_transmissionRateMax, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::updateInputParameters);
-    connect(ui->doubleSpinBox_deathRateMin, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::updateInputParameters);
-    connect(ui->doubleSpinBox_deathRateMax, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::updateInputParameters);
+    connect(ui->doubleSpinBox_deathRateMin, &QDoubleSpinBox::editingFinished, this, &MainWindow::updateInputParameters);
+    connect(ui->doubleSpinBox_deathRateMax, &QDoubleSpinBox::editingFinished, this, &MainWindow::updateInputParameters);
 //    connect(ui->spinBox_numberOfCellsPerAxis, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::updateNumberOfCellsPerRow);
     connect(ui->spinBox_numberOfCellsPerAxis, &QSpinBox::editingFinished, this, &MainWindow::updateNumberOfCellsPerRow);
 
-    connect(ui->doubleSpinBox_transmissionRateMax, &QDoubleSpinBox::editingFinished, this, &MainWindow::updateInfectionProbability);
-    connect(ui->doubleSpinBox_transmissionRateMin, &QDoubleSpinBox::editingFinished, this, &MainWindow::updateInfectionProbability);
+    connect(ui->doubleSpinBox_transmissionRateMax, &QDoubleSpinBox::editingFinished, this, &MainWindow::updateTransmissiotnRate);
+    connect(ui->doubleSpinBox_transmissionRateMin, &QDoubleSpinBox::editingFinished, this, &MainWindow::updateTransmissiotnRate);
 
 
 
@@ -85,6 +87,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->pushButton_calculateNextDay, &QPushButton::clicked, simulation.data(), &SimulationCore::update);
     connect(ui->pushButton_reset, &QPushButton::clicked, this, &MainWindow::reset);
+
+    connect(ui->pushButton_start, &QPushButton::clicked, simulation.data(), &SimulationCore::start);
+    connect(ui->pushButton_stop, &QPushButton::clicked, simulation.data(), &SimulationCore::stop);
 
     simulation->updateMap();
 
@@ -102,6 +107,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->doubleSpinBox_severeIllnessPeriodMean->setValue(32);
     ui->doubleSpinBox_severeIllnessPeriodSigma->setValue(7);
     ui->spinBox_numberOfCellsPerAxis->setValue(Constants::numberOfCellsPerRow);
+
+    updateInputParameters();
+    updateTransmissiotnRate();
 /*
     ui->lineEdit_deathRateMin->textChanged();
     ui->lineEdit_deathRateMax;
@@ -221,6 +229,12 @@ void MainWindow::setUpChart()
     ui->widget_chartTotalParameters->setChart(m_chartTotalParameters.data());
 
 
+    totalDeadSeries->append(0, 0);
+    totalInfectionSeries->append(0, 0);
+    totalRecoveredSeries->append(0, 0);
+    currentInfectionsSeries->append(0, 0);
+    dailyNewInfectionsSeries->append(0, 0);
+
 // TODO the bar chart that should present the daily number of new cases cause a segmentation fault.
 //    that should be investigated
 /*
@@ -260,14 +274,16 @@ void MainWindow::setUpChart()
 */
 }
 
-void MainWindow::updateInfectionProbability()
+void MainWindow::updateTransmissiotnRate()
 {
 
     double transmissionRateMin = ui->doubleSpinBox_transmissionRateMin->value();
     double transmissionRateMax = ui->doubleSpinBox_transmissionRateMax->value();
     if (transmissionRateMin >= transmissionRateMax) {
+        ui->doubleSpinBox_transmissionRateMax->blockSignals(true);
         transmissionRateMax = transmissionRateMin + 0.01;
         ui->doubleSpinBox_transmissionRateMax->setValue(transmissionRateMax);
+        ui->doubleSpinBox_transmissionRateMax->blockSignals(false);
     }
 
     simulation->UpdateTransmissionProbability(transmissionRateMin, transmissionRateMax);
@@ -286,6 +302,7 @@ void MainWindow::updateInputParameters()
     inputParameters.severeSymptomsPeriodSigma = ui->doubleSpinBox_severeIllnessPeriodSigma->value();
     inputParameters.persentSevereCases = ui->doubleSpinBox_percentSevereCases->value();
 
+
     double transmissionRateMin = ui->doubleSpinBox_transmissionRateMin->value();
     double transmissionRateMax = ui->doubleSpinBox_transmissionRateMax->value();
     if (transmissionRateMin >= transmissionRateMax) {
@@ -295,11 +312,14 @@ void MainWindow::updateInputParameters()
     inputParameters.transmissionRateMin = transmissionRateMin;
     inputParameters.transmissionRateMax = transmissionRateMax;
 
+
     double deathRateMin = ui->doubleSpinBox_deathRateMin->value();
     double deathRateMax = ui->doubleSpinBox_deathRateMax->value();
     if (deathRateMin >= deathRateMax) {
+        ui->doubleSpinBox_deathRateMax->blockSignals(true);
         deathRateMax = deathRateMin + 0.01;
         ui->doubleSpinBox_deathRateMax->setValue(deathRateMax);
+        ui->doubleSpinBox_deathRateMax->blockSignals(false);
     }
     inputParameters.deathRateMax = deathRateMax;
     inputParameters.deathRateMin = deathRateMin;
@@ -395,4 +415,21 @@ void MainWindow::reset()
     totalRecoveredSeries->clear();
     totalDeadSeries->clear();
     dailyNewInfectionsSeries->clear();
+}
+
+void MainWindow::startSimulation()
+{
+    /*
+    simulation->isRunning = true;
+
+        QScopedPointer<SimulationRunner> runner(new SimulationRunner);
+        connect(runner.data(), &SimulationRunner::finished, runner.data(), &QObject::deleteLater);
+        runner->startSimulation(simulation);
+    */
+
+}
+
+void MainWindow::stopSimulation()
+{
+//    simulation->isRunning = false;
 }

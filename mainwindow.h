@@ -10,11 +10,11 @@
 #include <QtCharts/QBarSet>
 #include <QtCharts/QBarCategoryAxis>
 
-#include "game.h"
 #include "populationmap.h"
 #include "person.h"
 #include "simulationcore.h"
 #include "globals.h"
+#include "simulationrunner.h"
 
 namespace Ui {
 class MainWindow;
@@ -31,6 +31,7 @@ public:
 private:
     Ui::MainWindow *ui;
     int cellsPerRow;
+    QString m_WindowTitle = "Simple Epidemic Simulator";
 
     // Infection Chart
     QSharedPointer<QtCharts::QChart> m_chartCurrentInfections;
@@ -58,16 +59,19 @@ private:
     // The background object that runs the simulation.
     QSharedPointer<SimulationCore> simulation;
 
+
     // Methods ---------------------------------------------------------------------------------------------------------
     void setUpChart();
 
 private slots:
 
-    void updateInfectionProbability();
+    void updateTransmissiotnRate();
     void updateInputParameters();
     void updateOutputParametersOnGUI(const OutputParameters* outputParameters);
     void updateNumberOfCellsPerRow();
     void reset();
+    void startSimulation();
+    void stopSimulation();
 
 };
 

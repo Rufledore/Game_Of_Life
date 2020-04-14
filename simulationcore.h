@@ -1,5 +1,5 @@
-#ifndef SIMULATIONRUNNER_H
-#define SIMULATIONRUNNER_H
+#ifndef SIMULATIONCORE_H
+#define SIMULATIONCORE_H
 
 #include <QObject>
 #include <QSharedPointer>
@@ -14,12 +14,15 @@ class SimulationCore : public QObject
 public:
     explicit SimulationCore(QObject *parent = nullptr, int peoplePerRow = Constants::numberOfCellsPerRow);
 
+    bool isRunning = false;
+
     // Map of infected people.
     QSharedPointer<InfectionMap> infectedPopulationMap;               //A table with vitaliti states of each cell of the map. The key is QPait of coordinates.
     QSharedPointer<InfectionMap> recoveredPopulationMap;               //A table with vitaliti states of each cell of the map. The key is QPait of coordinates.
     QList<CellCoordinates> keysOfInfectors;
 
     // Simulation methods:
+    void runningSimulation();
     void updateInfectionsForTheDay();
     QList<CellCoordinates> findPeopleInfectedBy(const Person* infector);
 
@@ -38,8 +41,9 @@ signals:
 
 public slots:
     void changeClickedPersonState(CellCoordinates cell);
-    void startSimulation();
     void update();
+    void start();
+    void stop();
 
 private:
     InputPerameters inputParameters;
@@ -50,4 +54,4 @@ private:
 
 };
 
-#endif // SIMULATIONRUNNER_H
+#endif // SIMULATIONCORE_H

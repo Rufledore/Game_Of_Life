@@ -3,15 +3,22 @@
 
 #include <QThread>
 
+#include "simulationcore.h"
+
 
 class SimulationRunner : public QThread
 {
     Q_OBJECT
 public:
-    explicit SimulationRunner(QObject *parent = nullptr);
+    void startSimulation(SimulationCore* simulation);
+
+    SimulationCore* m_simulation;
 
 
-signals:
+public slots:
+
+private slots:
+    void run() override;
 
 };
 

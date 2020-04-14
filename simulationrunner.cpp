@@ -1,6 +1,20 @@
+#include <QThread>
+
 #include "simulationrunner.h"
 
-SimulationRunner::SimulationRunner(QObject *parent) : QThread(parent)
+
+
+
+void SimulationRunner::run()
 {
+    m_simulation->runningSimulation();
 
 }
+
+void SimulationRunner::startSimulation(SimulationCore* simulation)
+{
+    m_simulation = simulation;
+
+    run();
+}
+

@@ -1,7 +1,9 @@
 #include <QDebug>
 #include <QThread>
+#include <QCoreApplication>
 
 #include "simulationcore.h"
+#include "simulationrunner.h"
 
 SimulationCore::SimulationCore(QObject *parent, int peoplePerRow) :
     QObject(parent),
@@ -242,19 +244,32 @@ void SimulationCore::changeClickedPersonState(CellCoordinates cell)
     updatedOutputParameters(&outputParameters);
 }
 
-void SimulationCore::startSimulation()
-{
-    while (true) {
-        updateInfectionsForTheDay();
-        QThread::msleep(1000);
-    }
-
-
-}
-
 void SimulationCore::update()
 {
     updateInfectionsForTheDay();
 
 }
 
+void SimulationCore::start()
+{
+    isRunning = true;
+
+    QScopedPointer<SimulationRunner> runner(new SimulationRunner);
+    connect(runner.data(), &SimulationRunner::finished, runner.data(), &QObject::deleteLater);
+    runner->startSimulation(this);
+}
+
+void SimulationCore::stop()
+{
+    isRunning = false;
+}
+
+void SimulationCore::runningSimulation()
+{
+    while (isRunning && outputParameters.numberOfInfections != 0) {
+        updateInfectionsForTheDay();
+        QThread::msleep(200);
+
+        QCoreApplication::processEvents();
+    }
+}

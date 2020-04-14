@@ -8,7 +8,7 @@ QT       += core gui charts
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = ivans-game-of-life
+TARGET = Simple Epidemic Simulator
 TEMPLATE = app
 
 # The following define makes your compiler emit warnings if you use
@@ -23,6 +23,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 CONFIG += c++11
+
+TARGET = Simple-Epidemic-Simulator
+TEMPLATE = app
+
+win32:RC_ICONS += Resources/simulation-icon.ico
+win32:VERSION = 1.0.0
+win32:QMAKE_TARGET_DESCRIPTION =Epidemic Simulator
+win32:QMAKE_TARGET_COPYRIGHT = All rights reserved.
 
 SOURCES += \
     globals.cpp \
