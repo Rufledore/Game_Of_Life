@@ -41,8 +41,8 @@ Source: "{#BuildDir}\styles\*.dll"; DestDir: "{app}\styles"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Icons]
-Name: "{group}\Simple Epidemic Simulator"; Filename: "{app}\Simple-Epidemic-Simulator.EXE"; WorkingDir: "{app}"
+Name: "{group}\Simple Epidemic Simulator"; Filename: "{app}\Simple-Epidemic-Simulator"; WorkingDir: "{app}"
 Name: "{group}\Melexis TPMS\Uninstall Melexis TPMS"; Filename: "{uninstallexe}"
-Name: "{userdesktop}\Simple-Epidemic-Simulator.EXE"; Filename: "{app}\Simple-Epidemic-Simulator.EXE"; Tasks: desktopicon
+Name: "{userdesktop}\Simple-Epidemic-Simulator.EXE"; Filename: "{app}\Simple-Epidemic-Simulator"; Tasks: desktopicon
 
 

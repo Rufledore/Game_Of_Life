@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QSharedPointer>
+#include <QMutex>
 
 #include <person.h>
 #include <randomgenerator.h>
@@ -14,7 +15,9 @@ class SimulationCore : public QObject
 public:
     explicit SimulationCore(QObject *parent = nullptr, int peoplePerRow = Constants::numberOfCellsPerRow);
 
+    // Multi-Threading parameters
     bool isRunning = false;
+    QMutex simulationMutex;
 
     // Map of infected people.
     QSharedPointer<InfectionMap> infectedPopulationMap;               //A table with vitaliti states of each cell of the map. The key is QPait of coordinates.

@@ -122,6 +122,7 @@ void SimulationCore::updateMap()
 
 void SimulationCore::restart(int peoplePerRow)
 {
+    isRunning = false;
     m_peoplePerRow = peoplePerRow;
 
     infectedPopulationMap->clear();
@@ -241,7 +242,9 @@ void SimulationCore::changeClickedPersonState(CellCoordinates cell)
     }
 
     clickedPerson->updateVitalityState(); //??????
-    updatedOutputParameters(&outputParameters);
+
+    if (!isRunning)
+        updatedOutputParameters(&outputParameters);
 }
 
 void SimulationCore::update()
@@ -252,6 +255,9 @@ void SimulationCore::update()
 
 void SimulationCore::start()
 {
+    if (isRunning)
+        return;
+
     isRunning = true;
 
     QScopedPointer<SimulationRunner> runner(new SimulationRunner);
@@ -266,9 +272,18 @@ void SimulationCore::stop()
 
 void SimulationCore::runningSimulation()
 {
+    int frameTime = 200;
+    int baseTime = QTime::currentTime().msecsSinceStartOfDay();
     while (isRunning && outputParameters.numberOfInfections != 0) {
-        updateInfectionsForTheDay();
-        QThread::msleep(200);
+        int currentTime = QTime::currentTime().msecsSinceStartOfDay();
+
+        if (currentTime - baseTime > frameTime) {
+            simulationMutex.lock();
+            updateInfectionsForTheDay();
+            simulationMutex.unlock();
+            baseTime = currentTime;
+        }
+        QThread::msleep(20);
 
         QCoreApplication::processEvents();
     }

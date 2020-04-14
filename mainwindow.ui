@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1288</width>
+    <width>1302</width>
     <height>800</height>
    </rect>
   </property>
@@ -589,7 +589,7 @@
        </size>
       </property>
       <property name="title">
-       <string>GroupBox</string>
+       <string>Map</string>
       </property>
       <layout class="QGridLayout" name="gridLayout_6">
        <item row="0" column="0">
@@ -866,7 +866,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1288</width>
+     <width>1302</width>
      <height>21</height>
     </rect>
    </property>
