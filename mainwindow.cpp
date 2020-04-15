@@ -5,7 +5,6 @@
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "entity.h"
 #include "populationmap.h"
 #include "globals.h"
 
