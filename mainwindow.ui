@@ -554,27 +554,6 @@
      </layout>
     </item>
     <item>
-     <widget class="QGroupBox" name="groupBox">
-      <property name="minimumSize">
-       <size>
-        <width>300</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="title">
-       <string>Charts</string>
-      </property>
-      <layout class="QGridLayout" name="gridLayout" columnstretch="0" columnminimumwidth="0">
-       <item row="1" column="0">
-        <widget class="QChartView" name="widget_chartTotalParameters" native="true"/>
-       </item>
-       <item row="0" column="0">
-        <widget class="QChartView" name="widget_chartCurrentlyInfected" native="true"/>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item>
      <widget class="QGroupBox" name="groupBox_4">
       <property name="minimumSize">
        <size>
@@ -811,7 +790,7 @@
               <enum>QAbstractSpinBox::PlusMinus</enum>
              </property>
              <property name="maximum">
-              <number>200</number>
+              <number>4000</number>
              </property>
              <property name="value">
               <number>100</number>
@@ -855,6 +834,27 @@
           </widget>
          </item>
         </layout>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QGroupBox" name="groupBox">
+      <property name="minimumSize">
+       <size>
+        <width>300</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="title">
+       <string>Charts</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout" columnstretch="0">
+       <item row="1" column="0">
+        <widget class="QChartView" name="widget_chartTotalParameters" native="true"/>
+       </item>
+       <item row="0" column="0">
+        <widget class="QChartView" name="widget_chartCurrentlyInfected" native="true"/>
        </item>
       </layout>
      </widget>

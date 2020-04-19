@@ -394,10 +394,12 @@ void MainWindow::updateNumberOfCellsPerRow()
         ui->spinBox_numberOfCellsPerAxis->setValue(10);
         cellsPerRow = ui->spinBox_numberOfCellsPerAxis->value();
     }
+    /*
     else if (cellsPerRow > 200) {
         ui->spinBox_numberOfCellsPerAxis->setValue(200);
         cellsPerRow = ui->spinBox_numberOfCellsPerAxis->value();
     }
+    */
 
 }
 

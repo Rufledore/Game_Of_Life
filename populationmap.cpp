@@ -242,7 +242,7 @@ void PopulationMap::drawNthCell(CellCoordinates currentCell, QBrush brush, QPain
 void PopulationMap::restart(int cellsPerRow)
 {
     m_cellsPerRow = cellsPerRow;
-    cellWidth = m_cellsPerRow <= 100 ? m_cellsPerRow <= 20 ? 16 : 6 : 4;
+    cellWidth = m_cellsPerRow <= 2000 ? m_cellsPerRow <= 100 ? m_cellsPerRow <= 20 ? 16 : 6 : 4 : 2;
     cellSeparator = cellWidth < 10 ? 1 : cellWidth/10;
     fieldWidth = (m_cellsPerRow + 2) * cellWidth + (m_cellsPerRow - 1) * cellSeparator;  //WIdth = (Num of cells * width of cell) + (Num of cells - 1) * separator) + 2 cells for the frame;
     fieldHeight = (m_cellsPerRow + 2) * cellWidth + (m_cellsPerRow - 1) * cellSeparator; //(cellsPerRow * (cellWidth + cellSeparator)) + cellWidth * 2 - cellSeparator;
