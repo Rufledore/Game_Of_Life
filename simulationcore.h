@@ -16,12 +16,12 @@ public:
     explicit SimulationCore(QObject *parent = nullptr, int peoplePerRow = Constants::numberOfCellsPerRow);
 
     // Multi-Threading parameters
-    bool isRunning = false;
-    QMutex simulationMutex;
+    bool m_isRunning = false;
+    QMutex m_simulationMutex;
 
     // Map of infected people.
     QSharedPointer<InfectionMap> infectedPopulationMap;               //A table with vitaliti states of each cell of the map. The key is QPait of coordinates.
-    QSharedPointer<InfectionMap> recoveredPopulationMap;               //A table with vitaliti states of each cell of the map. The key is QPait of coordinates.
+    QSharedPointer<InfectionMap> recoveredPopulationMap;              //A table with vitaliti states of each cell of the map. The key is QPait of coordinates.
     QList<CellCoordinates> keysOfInfectors;
 
     // Simulation methods:
@@ -49,12 +49,12 @@ public slots:
     void stop();
 
 private:
-    InputPerameters inputParameters;
-    OutputParameters outputParameters;
+    InputPerameters m_inputParameters;
+    OutputParameters m_outputParameters;
     RandomGenerator randomGenerator;
-
     int m_peoplePerRow;
 
+    void updateNumberOfVentilators();
 };
 
 #endif // SIMULATIONCORE_H

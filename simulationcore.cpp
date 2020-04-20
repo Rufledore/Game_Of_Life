@@ -43,7 +43,7 @@ void SimulationCore::updateInfectionsForTheDay()
              ++infectedPersonCoordinates) {
             if (!infectedPopulationMap->contains(*infectedPersonCoordinates) && !recoveredPopulationMap->contains(*infectedPersonCoordinates)) {
                 Person infectedPerson;
-                infectedPerson.calculateInfectionParameters(inputParameters);
+                infectedPerson.calculateInfectionParameters(m_inputParameters);
                 infectedPerson.updateVitalityState();
                 infectedPopulationMap->insert(*infectedPersonCoordinates, infectedPerson);
                 if (infectedPerson.stateIsChanged())
@@ -69,9 +69,9 @@ void SimulationCore::updateInfectionsForTheDay()
     }
 
 
-    ++outputParameters.numberOfDays;
+    ++m_outputParameters.numberOfDays;
     populationStatusUpdated(infectedPopulationMap.data());
-    updatedOutputParameters(&outputParameters);
+    updatedOutputParameters(&m_outputParameters);
 
 
 }
@@ -122,20 +122,25 @@ void SimulationCore::updateMap()
 
 void SimulationCore::restart(int peoplePerRow)
 {
-    isRunning = false;
+    m_isRunning = false;
     m_peoplePerRow = peoplePerRow;
+
 
     infectedPopulationMap->clear();
     recoveredPopulationMap->clear();
-    outputParameters.numberOfDays = 0;
-    outputParameters.numberOfDeaths = 0;
-    outputParameters.numberOfRecovered = 0;
-    outputParameters.numberOfInfections = 0;
-    outputParameters.numberOfMildSymptoms = 0;
-    outputParameters.numberOfSevereSymptoms = 0;
-    outputParameters.numberOfTotalInfections = 0;
+    m_outputParameters.numberOfDays = 0;
+    m_outputParameters.numberOfDeaths = 0;
+    m_outputParameters.numberOfRecovered = 0;
+    m_outputParameters.numberOfInfections = 0;
+    m_outputParameters.numberOfMildSymptoms = 0;
+    m_outputParameters.numberOfSevereSymptoms = 0;
+    m_outputParameters.numberOfTotalInfections = 0;
+    m_outputParameters.numberOfBusyVentilators = 0;
+    m_outputParameters.numberOfVentilators = static_cast<int>(m_peoplePerRow
+                                                              * m_peoplePerRow
+                                                              * m_inputParameters.ventilatorsPerCapita);
 
-    updatedOutputParameters(&outputParameters);
+    updatedOutputParameters(&m_outputParameters);
 }
 
 void SimulationCore::calculateOutputParameters(CellCoordinates coordinates)
@@ -149,37 +154,37 @@ void SimulationCore::calculateOutputParameters(CellCoordinates coordinates)
     case VitalityState::healthy:
     {
         if      (previousState == VitalityState::dead)
-            --outputParameters.numberOfDeaths;
+            --m_outputParameters.numberOfDeaths;
         else if (previousState == VitalityState::infected_severe_symptoms) {
-            --outputParameters.numberOfSevereSymptoms;
-            --outputParameters.numberOfInfections;
+            --m_outputParameters.numberOfSevereSymptoms;
+            --m_outputParameters.numberOfInfections;
         }
         else if (previousState == VitalityState::infected_mild_symptoms) {
-            --outputParameters.numberOfMildSymptoms;
-            --outputParameters.numberOfInfections;
+            --m_outputParameters.numberOfMildSymptoms;
+            --m_outputParameters.numberOfInfections;
         }
-        ++outputParameters.numberOfRecovered;
+        ++m_outputParameters.numberOfRecovered;
     }
         break;
     case VitalityState::infected_incubation:
-        ++outputParameters.numberOfInfections;
-        ++outputParameters.numberOfTotalInfections;
+        ++m_outputParameters.numberOfInfections;
+        ++m_outputParameters.numberOfTotalInfections;
         break;
     case VitalityState::infected_mild_symptoms:
-        ++outputParameters.numberOfMildSymptoms;
+        ++m_outputParameters.numberOfMildSymptoms;
         break;
     case VitalityState::infected_severe_symptoms:
     {
         if (previousState == VitalityState::infected_mild_symptoms)
-            --outputParameters.numberOfMildSymptoms;
-        ++outputParameters.numberOfSevereSymptoms;
+            --m_outputParameters.numberOfMildSymptoms;
+        ++m_outputParameters.numberOfSevereSymptoms;
     }
         break;
     case VitalityState::dead:
     {
-        --outputParameters.numberOfSevereSymptoms;
-        --outputParameters.numberOfInfections;
-        ++outputParameters.numberOfDeaths;
+        --m_outputParameters.numberOfSevereSymptoms;
+        --m_outputParameters.numberOfInfections;
+        ++m_outputParameters.numberOfDeaths;
     }
         break;
     }
@@ -188,21 +193,22 @@ void SimulationCore::calculateOutputParameters(CellCoordinates coordinates)
 
 void SimulationCore::UpdateInputParameters(const InputPerameters* parameters)
 {
-    inputParameters = *parameters;
-    qDebug() << inputParameters.deathRateMin;
+    m_inputParameters = *parameters;
+
+    updateNumberOfVentilators();
 }
 
 void SimulationCore::UpdateTransmissionProbability(double min, double max)
 {
-    inputParameters.transmissionRateMin = min;
-    inputParameters.transmissionRateMax = max;
+    m_inputParameters.transmissionRateMin = min;
+    m_inputParameters.transmissionRateMax = max;
 
     keysOfInfectors.clear();
     keysOfInfectors = infectedPopulationMap->keys();
     QList<CellCoordinates>::iterator infectorKey = keysOfInfectors.begin();
 
     while (infectorKey != keysOfInfectors.end()) {
-        (*infectedPopulationMap)[*infectorKey].updateProbabilityToInfect(inputParameters);
+        (*infectedPopulationMap)[*infectorKey].updateProbabilityToInfect(m_inputParameters);
         infectorKey = keysOfInfectors.erase(infectorKey);
     }
 
@@ -210,7 +216,7 @@ void SimulationCore::UpdateTransmissionProbability(double min, double max)
 
 OutputParameters SimulationCore::getOutputParameters()
 {
-    return outputParameters;
+    return m_outputParameters;
 
 }
 
@@ -219,32 +225,32 @@ void SimulationCore::changeClickedPersonState(CellCoordinates cell)
     Person* clickedPerson = &(*infectedPopulationMap)[cell]; // If the key is not in the map it is automatically generated.
     switch (clickedPerson->vitalityState) {
     case VitalityState::healthy:
-        ++outputParameters.numberOfInfections;
-        ++outputParameters.numberOfTotalInfections;
-        clickedPerson->calculateInfectionParameters(inputParameters);
+        ++m_outputParameters.numberOfInfections;
+        ++m_outputParameters.numberOfTotalInfections;
+        clickedPerson->calculateInfectionParameters(m_inputParameters);
         break;
     case VitalityState::infected_incubation:
-        ++outputParameters.numberOfMildSymptoms;
+        ++m_outputParameters.numberOfMildSymptoms;
         break;
     case VitalityState::infected_mild_symptoms:
-        --outputParameters.numberOfMildSymptoms;
-        ++outputParameters.numberOfSevereSymptoms;
+        --m_outputParameters.numberOfMildSymptoms;
+        ++m_outputParameters.numberOfSevereSymptoms;
         break;
     case VitalityState::infected_severe_symptoms:
-        --outputParameters.numberOfInfections;
-        --outputParameters.numberOfTotalInfections;
-        --outputParameters.numberOfSevereSymptoms;
-        ++outputParameters.numberOfDeaths;
+        --m_outputParameters.numberOfInfections;
+        --m_outputParameters.numberOfTotalInfections;
+        --m_outputParameters.numberOfSevereSymptoms;
+        ++m_outputParameters.numberOfDeaths;
         break;
     case VitalityState::dead:
-        --outputParameters.numberOfDeaths;
+        --m_outputParameters.numberOfDeaths;
         break;
     }
 
     clickedPerson->updateVitalityState(); //??????
 
-    if (!isRunning)
-        updatedOutputParameters(&outputParameters);
+    if (!m_isRunning)
+        updatedOutputParameters(&m_outputParameters);
 }
 
 void SimulationCore::update()
@@ -255,10 +261,10 @@ void SimulationCore::update()
 
 void SimulationCore::start()
 {
-    if (isRunning)
+    if (m_isRunning)
         return;
 
-    isRunning = true;
+    m_isRunning = true;
 
     QScopedPointer<SimulationRunner> runner(new SimulationRunner);
     connect(runner.data(), &SimulationRunner::finished, runner.data(), &QObject::deleteLater);
@@ -267,20 +273,26 @@ void SimulationCore::start()
 
 void SimulationCore::stop()
 {
-    isRunning = false;
+    m_isRunning = false;
+}
+
+void SimulationCore::updateNumberOfVentilators()
+{
+    m_outputParameters.numberOfVentilators = static_cast<int>(m_inputParameters.ventilatorsPerCapita * m_peoplePerRow * m_peoplePerRow);
+    updatedOutputParameters(&m_outputParameters);
 }
 
 void SimulationCore::runningSimulation()
 {
     int frameTime = 200;
     int baseTime = QTime::currentTime().msecsSinceStartOfDay();
-    while (isRunning && outputParameters.numberOfInfections != 0) {
+    while (m_isRunning && m_outputParameters.numberOfInfections != 0) {
         int currentTime = QTime::currentTime().msecsSinceStartOfDay();
 
         if (currentTime - baseTime > frameTime) {
-            simulationMutex.lock();
+            m_simulationMutex.lock();
             updateInfectionsForTheDay();
-            simulationMutex.unlock();
+            m_simulationMutex.unlock();
             baseTime = currentTime;
         }
         QThread::msleep(20);
