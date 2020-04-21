@@ -255,7 +255,7 @@ void MainWindow::updateInputParameters()
     inputParameters.ICUPeriodMean = ui->doubleSpinBox_ICUPeriodMean->value();
     inputParameters.ICUPeriodSigma = ui->doubleSpinBox_ICUPeriodSigma->value();
     inputParameters.ICUMortalityRate = ui->doubleSpinBox_ICUMortalityRate->value();
-    inputParameters.ICUCasesFromSevereCases = ui->doubleSpinBox_percentCasesForICU->value();
+    inputParameters.percentSevereCasesForICU = ui->doubleSpinBox_percentCasesForICU->value();
     inputParameters.ventilatorsPerCapita = ui->doubleSpinBox_VentilatorsPerCapita->value();
     inputParameters.persentSevereCases = ui->doubleSpinBox_percentSevereCases->value();
 

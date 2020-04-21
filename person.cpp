@@ -8,7 +8,7 @@ Person::Person()
 
 }
 
-void Person::updateDayCounters()
+void Person::updateDayCounters(bool isThereVentilator)
 {
     stateChanged = false;
     switch (vitalityState) {
@@ -33,11 +33,24 @@ void Person::updateDayCounters()
         break;
     case VitalityState::infected_severe_symptoms:
         ++sicknessDaysCounter;
-        if (sicknessDaysCounter >= dayOfDeath && willDie) {
-            updateVitalityStateTo(dead);
+        if (sicknessDaysCounter >= dayOfICU && willBeInICU) {
+            if (isThereVentilator) {
+                updateVitalityStateTo(in_ICU);
+            } else {
+                updateVitalityStateTo(dead);
+            }
         }
         if (sicknessDaysCounter > symptomsPeriod) {
             updateVitalityStateTo(healthy);
+        }
+        break;
+    case VitalityState::in_ICU:
+        ++sicknessDaysCounter;
+        if (sicknessDaysCounter >= dayOfICU + dayOfDeathInICU && willDieInICU) {
+            updateVitalityStateTo(dead);
+        }
+        else if (sicknessDaysCounter >= dayOfICU + ICUPeriod) {
+            updateVitalityStateTo(infected_severe_symptoms);
         }
         break;
     case VitalityState::dead:
@@ -86,14 +99,20 @@ void Person::calculateInfectionParameters(const InputPerameters& parameters)
 //  Calculate death rate uniformly between min and max.
     if (isSevere) {
         double ICUProbability = Singleton::randomGenerator().generateUniform(0,100);
-        if (ICUProbability < parameters.percentSevereCasesForICU) {
-            // Implement ICU here
+        if (ICUProbability <= parameters.percentSevereCasesForICU) {
+            // Calculate day of getting into ICU and day of getting out. It will be if there is available ICU.
+            ICUPeriod = static_cast<int>(Singleton::randomGenerator()
+                                         .generateNormal(parameters.ICUPeriodMean, parameters.ICUPeriodSigma));
+            dayOfICU = static_cast<int>(Singleton::randomGenerator().generateUniform(0, symptomsPeriod - ICUPeriod));
+            willBeInICU = true;\
 
-
-            dayOfDeath = static_cast<int>(Singleton::randomGenerator().generateUniform(0, symptomsPeriod));
-            willDie = true;
+            // Calculate the will the person die in the ICU.
+            double dieProbability = Singleton::randomGenerator().generateUniform(0,100);
+            if (dieProbability <= parameters.ICUMortalityRate) {
+                dayOfDeathInICU = static_cast<int>(Singleton::randomGenerator().generateUniform(0, ICUPeriod));
+                willDieInICU = true;
+            }
         }
-
     }
 
 //  Calculate probability to infect someone in a day.
@@ -117,6 +136,9 @@ void Person::updateVitalityState()
         updateVitalityStateTo(infected_severe_symptoms);
         break;
     case VitalityState::infected_severe_symptoms:
+        updateVitalityStateTo(dead);
+        break;
+    case VitalityState::in_ICU:
         updateVitalityStateTo(dead);
         break;
     case VitalityState::dead:

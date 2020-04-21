@@ -59,7 +59,8 @@ void SimulationCore::updateInfectionsForTheDay()
             }
         }
 
-        infector.updateDayCounters();
+        bool thereIsVentilator = m_outputParameters.numberOfVentilators - m_outputParameters.numberOfBusyVentilators > 0;
+        infector.updateDayCounters(thereIsVentilator);
         infectedPopulationMap->insert(*infectorKey, infector);
         if (infector.stateIsChanged())
             calculateOutputParameters(*infectorKey);
@@ -177,8 +178,13 @@ void SimulationCore::calculateOutputParameters(CellCoordinates coordinates)
     {
         if (previousState == VitalityState::infected_mild_symptoms)
             --m_outputParameters.numberOfMildSymptoms;
+        if (previousState == VitalityState::in_ICU)
+            --m_outputParameters.numberOfBusyVentilators;
         ++m_outputParameters.numberOfSevereSymptoms;
     }
+        break;
+    case VitalityState::in_ICU:
+        ++m_outputParameters.numberOfBusyVentilators;
         break;
     case VitalityState::dead:
     {
@@ -237,6 +243,12 @@ void SimulationCore::changeClickedPersonState(CellCoordinates cell)
         ++m_outputParameters.numberOfSevereSymptoms;
         break;
     case VitalityState::infected_severe_symptoms:
+        --m_outputParameters.numberOfInfections;
+        --m_outputParameters.numberOfTotalInfections;
+        --m_outputParameters.numberOfSevereSymptoms;
+        ++m_outputParameters.numberOfDeaths;
+        break;
+    case VitalityState::in_ICU:
         --m_outputParameters.numberOfInfections;
         --m_outputParameters.numberOfTotalInfections;
         --m_outputParameters.numberOfSevereSymptoms;

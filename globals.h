@@ -24,7 +24,7 @@ struct InputPerameters
     double persentSevereCases = 0;
     double ventilatorsPerCapita = 0;
     double ICUMortalityRate = 0;
-    double ICUCasesFromSevereCases = 0;
+    double percentSevereCasesForICU = 0;
 };
 
 struct OutputParameters

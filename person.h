@@ -8,7 +8,7 @@ class Person
 {
 public:
     Person();
-    void updateDayCounters();
+    void updateDayCounters(bool isThereVentilator);
     void updateProbabilityToInfect(const InputPerameters& parameters);
     void calculateInfectionParameters(const InputPerameters& parameters);
     void updateVitalityState();
@@ -22,13 +22,16 @@ public:
     bool stateIsChanged() const;
 
 private:
-    int dayOfDeath = 0;     // Day of the illness period
+    int dayOfICU = 0;
+    int ICUPeriod = 0;
     int incubationPeriod = 0;
     int symptomsPeriod = 0;
+    int dayOfDeathInICU = 0;
     double probabilityToInfect = 0;
     bool isSevere = false;
     bool stateChanged = false;
-    bool needsICU = false;
+    bool willBeInICU = false;
+    bool willDieInICU = false;
 
     int incubationDaysCounter = 0;
     int sicknessDaysCounter = 0;
